@@ -1,4 +1,4 @@
-package com.mzouink.tornado.bubblesapp.app
+package com.preibisch.pinna2d.app
 
 import javafx.scene.text.FontWeight
 import tornadofx.Stylesheet

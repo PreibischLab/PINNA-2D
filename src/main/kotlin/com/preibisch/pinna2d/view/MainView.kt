@@ -1,6 +1,6 @@
-package com.mzouink.tornado.bubblesapp.view
+package com.preibisch.pinna2d.view
 
-import com.mzouink.tornado.bubblesapp.controllers.AnnotationController
+import com.preibisch.pinna2d.controllers.AnnotationController
 import javafx.geometry.Pos
 import javafx.scene.control.Label
 import javafx.scene.input.MouseDragEvent

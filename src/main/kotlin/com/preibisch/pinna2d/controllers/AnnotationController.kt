@@ -1,6 +1,6 @@
-package com.mzouink.tornado.bubblesapp.controllers
+package com.preibisch.pinna2d.controllers
 
-import com.mzouink.tornado.bubblesapp.view.MainView
+import com.preibisch.pinna2d.view.MainView
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Point2D
 import javafx.scene.Node
