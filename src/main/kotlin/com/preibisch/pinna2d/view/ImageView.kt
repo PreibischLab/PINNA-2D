@@ -1,16 +1,20 @@
 package com.preibisch.pinna2d.view
 
-import com.preibisch.pinna2d.controllers.AnnotationController
+import com.preibisch.pinna2d.controllers.ImageController
 import javafx.geometry.Pos
 import javafx.scene.control.Label
+import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseDragEvent
 import tornadofx.*
 
-class MainView : View("Annotation") {
-    private val annotationController : AnnotationController by inject()
+class ImageView : View("Image View") {
+    private val annotationController : ImageController by inject()
     private  var myLabel : Label by singleAssign()
     override val root = borderpane() {
-        setPrefSize(1000.0,500.0)
+
+        addEventFilter(KeyEvent.KEY_PRESSED){
+
+        }
         center{
             label {
                 myLabel = this
@@ -44,5 +48,6 @@ class MainView : View("Annotation") {
             annotationController.addCircle(it,this)
 //            annotationController.addRandomText()
         }
+
     }
 }

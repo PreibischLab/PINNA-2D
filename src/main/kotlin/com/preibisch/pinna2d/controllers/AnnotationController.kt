@@ -1,56 +1,113 @@
 package com.preibisch.pinna2d.controllers
 
-import com.preibisch.pinna2d.view.MainView
-import javafx.beans.property.SimpleStringProperty
-import javafx.geometry.Point2D
-import javafx.scene.Node
-import javafx.scene.input.MouseEvent
-import javafx.scene.media.AudioClip
-import javafx.scene.paint.Color
-import javafx.scene.shape.Circle
-import javafx.util.Duration
+
+import com.preibisch.pinna2d.model.AnnotationEntry
+import com.preibisch.pinna2d.model.AnnotationEntryModel
+import com.preibisch.pinna2d.model.AnnotationEntryTbl
+import com.preibisch.pinna2d.model.toAnnotationEntry
+import com.preibisch.pinna2d.util.execute
+import com.preibisch.pinna2d.util.toDate
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
+import javafx.scene.chart.PieChart
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.update
 import tornadofx.*
+import java.time.LocalDate
 
 class AnnotationController : Controller() {
+    var expenseModel = AnnotationEntryModel()
 
-    private var circle = Circle()
+    //    get All Items
+    private val listOfItems: ObservableList<AnnotationEntryModel> = execute {
+        AnnotationEntryTbl.selectAll().map {
+            AnnotationEntryModel().apply {
+                item = it.toAnnotationEntry()
+            }
+        }.observable()
+    }
 
-    var mText = SimpleStringProperty()
+    var items: ObservableList<AnnotationEntryModel> by singleAssign()
+//    var pieItemsData = FXCollections.observableArrayList<PieChart.Data>()
 
-//    private var audioClip = AudioClip(MainView::class.java.getResource("/celestial-sound.wav").toExternalForm())
+    init {
+        items = listOfItems
+        //test
+//        add(LocalDate.now(),"test1",1,1)
+//        add(LocalDate.now(),"test1",2,3)
+//        add(LocalDate.now(),"test1",3,2)
+//        add(LocalDate.now(),"test1",4,1)
 
-    private val colorList: List<String> = listOf("#81ecec", "#55efc4", "#74b9ff","#a29bfe","#b2bec3","#fab1a0","#fd79a8")
-
-    fun addCircle(it: MouseEvent, root: Node) {
-        val mousePt: Point2D = root.sceneToLocal(it.sceneX, it.sceneY)
-        circle = Circle(mousePt.x, mousePt.y, 14.5, Color.ORANGE)
-//        circle.apply {
-//            animateFill(Duration.seconds(1.19), c(randomColor()),Color.TRANSPARENT)
+//        listOfItems.forEach{
+//            print("Item :: ${it.itemName.value}")
 //        }
 
-        root.getChildList()!!.add(circle)
-
-//        if(audioClip.isPlaying){
-//            audioClip.volumeProperty().value = 0.3
-//            audioClip.panProperty().value = 1.0
-//        }else{
-//            audioClip.volumeProperty().value = 0.8
-//            audioClip.play()
+//        items.forEach {
+//            pieItemsData.add(PieChart.Data(it.itemName.value,it.itemPrice.value.toDouble()))
 //        }
-
     }
 
-    fun addRandomText(){
-        mText.set(randomColor())
+    fun add(newEntryDate: LocalDate, newImageName: String, newAnnotationId: Int, newAnnotationVal: Int): AnnotationEntry {
+        val newEntry = execute {
+            AnnotationEntryTbl.insert {
+                it[entryDate] = newEntryDate.toDate()
+                it[imageName] = newImageName
+                it[annotationId] = newAnnotationId
+                it[annotationVal] = newAnnotationVal
+            }
+        }
+        listOfItems.add(AnnotationEntryModel().apply {
+            item = AnnotationEntry(newEntry[AnnotationEntryTbl.id], newEntryDate, newImageName,newAnnotationId,newAnnotationVal)
+        })
+//        pieItemsData.add(PieChart.Data(newItem,newPrice))
+        return AnnotationEntry(newEntry[AnnotationEntryTbl.id], newEntryDate, newImageName,newAnnotationId,newAnnotationVal)
     }
 
-    fun <T> ranomValue(list: List<T>): T{
-        val listSize: Int = list.size
-        val randomNum: Int = (0 until listSize).shuffled().last()
-        return list[randomNum]
+    fun update(updatedItem: AnnotationEntryModel): Int {
+        return execute {
+            AnnotationEntryTbl.update({
+                AnnotationEntryTbl.id eq (updatedItem.id.value.toInt())
+            }) {
+                it[entryDate] = updatedItem.entryDate.value.toDate()
+                it[imageName] = updatedItem.imageName.value
+                it[annotationId] = updatedItem.annotationId.value.toInt()
+                it[annotationVal] = updatedItem.annotationVal.value.toInt()
+            }
+        }
     }
 
-    private fun randomColor(): String {
-        return ranomValue(colorList)
+    fun delete(model: AnnotationEntryModel) {
+        execute {
+            AnnotationEntryTbl.deleteWhere {
+                AnnotationEntryTbl.id eq (model.id.value.toInt())
+            }
+        }
+        listOfItems.remove(model)
+//        removeModelFromPie(model)
     }
+
+//    fun updatePiecePie(model: ExpensesEntryModel){
+//        var modelId = model.id
+//        var currentIndex : Int = 0
+//
+//        items.forEachIndexed { index, data ->
+//            if(data.id == modelId ){
+//                currentIndex = index
+//                pieItemsData[currentIndex].name = data.itemName.value
+//                pieItemsData[currentIndex].pieValue = data.itemPrice.value.toDouble()
+//            }
+//        }
+//    }
+
+//    private fun removeModelFromPie(model: ExpensesEntryModel) {
+//        var currentIndex = 0
+//        pieItemsData.forEachIndexed { index, data ->
+//            if(data.name == model.itemName.value && index != -1){
+//                currentIndex = index
+//            }
+//        }
+//        pieItemsData.removeAt(currentIndex)
+//    }
 }
