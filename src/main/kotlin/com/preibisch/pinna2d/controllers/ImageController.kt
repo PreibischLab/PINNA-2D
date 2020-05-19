@@ -28,7 +28,7 @@ class ImageController : Controller() {
     var image: Image
 
     init {
-        val path = MainAnnotationView::class.java.getResource("/cat.jpg").path
+        val path = MainAnnotationView::class.java.getResource("/test.tif").path
         println(path)
         val mat: Mat = CV2.readImg(path)
         println(mat.height())
@@ -61,6 +61,10 @@ class ImageController : Controller() {
 //            animateStroke(Duration.seconds(0.02), Color.GREY,Color.TRANSPARENT)
 //        }
         root.getChildList()!!.add(1, positionCircle)
+    }
+
+    fun clickOnImage(x: Double, y: Double) {
+
     }
 
 }
