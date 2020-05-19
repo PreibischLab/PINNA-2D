@@ -9,12 +9,40 @@
     <version>0.1</version>
     <packaging>jar</packaging>
 
+    <name>Annotation Plugin</name>
+    <description>Annotation Plugin</description>
+    <url>https://github.com/PreibischLab/annotation_plugin</url>
+    <inceptionYear>2019</inceptionYear>
+    <organization>
+        <name>Preibisch Lab</name>
+        <url>http://preibischlab.mdc-berlin.de</url>
+    </organization>
+    <licenses>
+        <license>
+            <name>GNU General Public License v2+</name>
+            <url>https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <properties>
+        <license.licenseName>gpl_v2</license.licenseName>
+        <license.copyrightOwners>Image distribution developers.</license.copyrightOwners>
+        <releaseProfiles>deploy-to-scijava</releaseProfiles>
+        <java.version>1.8</java.version>
         <kotlin.version>1.2.60</kotlin.version>
         <tornadofx.version>1.7.17</tornadofx.version>
     </properties>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.clojure/clojure -->
+        <dependency>
+            <groupId>org.clojure</groupId>
+            <artifactId>clojure</artifactId>
+            <version>1.10.1</version>
+        </dependency>
+
+        <!--        Kotlin    -->
         <dependency>
             <groupId>no.tornado</groupId>
             <artifactId>tornadofx</artifactId>
@@ -45,7 +73,16 @@
             <version>3.30.1</version>
         </dependency>
     </dependencies>
+
     <repositories>
+        <repository>
+            <id>imagej.public</id>
+            <url>http://maven.imagej.net/content/groups/public</url>
+        </repository>
+        <repository>
+            <id>saalfeld-lab-maven-repo</id>
+            <url>https://saalfeldlab.github.io/maven</url>
+        </repository>
         <repository>
             <id>exposed</id>
             <name>exposed</name>
@@ -54,7 +91,42 @@
     </repositories>
 
     <build>
-        <sourceDirectory>src/main/kotlin</sourceDirectory>
+        <!--        <sourceDirectory>src/main/kotlin</sourceDirectory>-->
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <version>${kotlin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>compile</id>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                            <configuration>
+                                <sourceDirs>
+                                    <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
+                                    <sourceDir>${project.basedir}/src/main/java</sourceDir>
+                                </sourceDirs>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>test-compile</id>
+                            <goals>
+                                <goal>test-compile</goal>
+                            </goals>
+                            <configuration>
+                                <sourceDirs>
+                                    <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
+                                    <sourceDir>${project.basedir}/src/test/java</sourceDir>
+                                </sourceDirs>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>

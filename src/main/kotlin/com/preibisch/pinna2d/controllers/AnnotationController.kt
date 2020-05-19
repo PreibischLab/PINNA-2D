@@ -18,7 +18,7 @@ import tornadofx.*
 import java.time.LocalDate
 
 class AnnotationController : Controller() {
-    var expenseModel = AnnotationEntryModel()
+    var annotationsModel = AnnotationEntryModel()
 
     //    get All Items
     private val listOfItems: ObservableList<AnnotationEntryModel> = execute {

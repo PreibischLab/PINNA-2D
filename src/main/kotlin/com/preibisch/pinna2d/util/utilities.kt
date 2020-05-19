@@ -10,3 +10,11 @@ fun DateTime.toJavaLocalDate(): LocalDate {
 fun LocalDate.toDate(default: DateTime = org.joda.time.DateTime(1900, 1, 1, 0, 0, 0)): DateTime {
     return DateTime(this.year, this.monthValue, this.dayOfMonth, 0, 0, 0)
 }
+
+
+fun <T> randomValue(list: List<T>): T{
+    val listSize: Int = list.size
+    val randomNum: Int = (0 until listSize).shuffled().last()
+    return list[randomNum]
+}
+
