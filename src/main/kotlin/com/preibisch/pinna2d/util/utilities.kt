@@ -18,3 +18,4 @@ fun <T> randomValue(list: List<T>): T{
     return list[randomNum]
 }
 
+fun Double.format(digits: Int) = "%.${digits}f".format(this)

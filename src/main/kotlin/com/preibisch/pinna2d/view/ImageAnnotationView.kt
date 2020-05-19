@@ -1,21 +1,21 @@
 package com.preibisch.pinna2d.view
 
+import com.preibisch.pinna2d.controllers.EventControllers
 import com.preibisch.pinna2d.controllers.ImageController
-import javafx.geometry.Pos
+import javafx.scene.Node
 import javafx.scene.control.Label
-import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseDragEvent
+import javafx.scene.input.MouseEvent
 import tornadofx.*
 
 class ImageAnnotationView : View("Image View") {
-    private val imageController : ImageController by inject()
-    private  var myLabel : Label by singleAssign()
-    override val root = borderpane  {
+    private val imageController: ImageController by inject()
+    private var myLabel: Label by singleAssign()
+    override val root = borderpane {
+        EventControllers().addEventsListners(this)
 
-        addEventFilter(KeyEvent.KEY_PRESSED){
 
-        }
-        center =  imageview(imageController.image)
+        center = imageview(imageController.image)
 //        borderpane {
 //        center{
 //            label {
@@ -43,13 +43,13 @@ class ImageAnnotationView : View("Image View") {
             backgroundColor += c("#E0EEEE")
         }
 
-        addEventFilter(MouseDragEvent.MOUSE_DRAGGED){
-            imageController.addCircle(it,this)
-        }
-        addEventFilter(MouseDragEvent.MOUSE_CLICKED){
-            imageController.addCircle(it,this)
-//            annotationController.addRandomText()
-        }
+
+//        addEventFilter(MouseDragEvent.MOUSE_CLICKED){
+////            annotationController.addRandomText()
+//        }
 
     }
+
+
 }
+

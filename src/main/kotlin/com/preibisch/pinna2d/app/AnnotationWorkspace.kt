@@ -10,17 +10,13 @@ import tornadofx.*
 
 class AnnotationWorkspace: Workspace("Budget Tracker Workspace", NavigationMode.Tabs) {
     init {
-        // Initialize DB
-        enableConsoleLogger()
-        Database.connect("jdbc:sqlite:./pinny-annotations.db", "org.sqlite.JDBC")
-        createTables()
-
-        // controller(es)
-        AnnotationController()
-
         // doc our views
         dock<MainAnnotationView>()
-
         tabContainer.tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+
     }
 }
