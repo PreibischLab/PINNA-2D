@@ -1,20 +1,20 @@
 package com.preibisch.pinna2d.controllers
 
 import com.preibisch.pinna2d.tools.CV2
-import com.preibisch.pinna2d.util.format
+import com.preibisch.pinna2d.tools.ImpHelper
 import com.preibisch.pinna2d.util.randomColor
 import com.preibisch.pinna2d.view.MainAnnotationView
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.image.Image
-import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import org.opencv.core.Mat
 import tornadofx.*
-import java.util.*
+import java.io.File
+import kotlin.math.roundToInt
 
 
 class ImageController : Controller() {
@@ -28,12 +28,16 @@ class ImageController : Controller() {
     var image: Image
 
     init {
-        val path = MainAnnotationView::class.java.getResource("/test.tif").path
-        println(path)
-        val mat: Mat = CV2.readImg(path)
-        println(mat.height())
-        println(mat.width())
-        image = CV2.matToImg(mat)
+        val input_path = MainAnnotationView::class.java.getResource("/img.tif").path
+        val mask_path = MainAnnotationView::class.java.getResource("/mask.tif").path
+        val comp = ImpHelper.getComposite(File(input_path),File(mask_path))
+
+        println(input_path)
+//        CV2.init(input_path,mask_path)
+//        println(mat.height())
+//        println(mat.width())
+//        image = CV2.getGUIImage()
+        image = ImpHelper.toImage(comp)
 
     }
 //    private var audioClip = AudioClip(MainView::class.java.getResource("/celestial-sound.wav").toExternalForm())
@@ -64,7 +68,7 @@ class ImageController : Controller() {
     }
 
     fun clickOnImage(x: Double, y: Double) {
-
+        val v : Float  = CV2.getValue(x.toInt(), y.toInt())
     }
 
 }

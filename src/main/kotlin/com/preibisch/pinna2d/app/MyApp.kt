@@ -1,7 +1,7 @@
 package com.preibisch.pinna2d.app
 
 import com.preibisch.pinna2d.controllers.AnnotationController
-import com.preibisch.pinna2d.controllers.KeyController
+import com.preibisch.pinna2d.controllers.EventControllers
 import com.preibisch.pinna2d.util.createTables
 import com.preibisch.pinna2d.util.enableConsoleLogger
 import com.preibisch.pinna2d.view.MainAnnotationView
@@ -12,7 +12,7 @@ import tornadofx.*
 
 class MyApp: App(MainAnnotationView::class, Styles::class){
 
-    val keyController : KeyController by inject()
+    val eventControllers : EventControllers by inject()
 
 
     override fun start(stage: Stage) {
@@ -24,8 +24,10 @@ class MyApp: App(MainAnnotationView::class, Styles::class){
 //                println("pressed:" + it.character)
 //            }
             addEventFilter(KeyEvent.ANY) {
-                println("pressed:" + it.character)
-                keyController.keyPressed(it)
+               when(it.eventType){
+                   KeyEvent.KEY_PRESSED -> eventControllers.keyPressed(it.code)
+                   KeyEvent.KEY_RELEASED -> eventControllers.keyReleased(it.code)
+               }
             }
             super.start(stage)
         }

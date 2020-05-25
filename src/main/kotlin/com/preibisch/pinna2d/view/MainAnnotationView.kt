@@ -1,7 +1,5 @@
 package com.preibisch.pinna2d.view
 
-import com.preibisch.pinna2d.controllers.KeyController
-import javafx.scene.input.KeyEvent
 import tornadofx.*
 
 

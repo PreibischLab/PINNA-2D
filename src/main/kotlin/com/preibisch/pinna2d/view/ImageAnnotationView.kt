@@ -15,12 +15,9 @@ class ImageAnnotationView : View("Image View") {
     private var imageView = ImageView()
     var scrollPane = ScrollPane()
     override val root = borderpane {
-        EventControllers().addEventsListners(this)
+        EventControllers().addEventsListners(imageView)
         imageView.image = imageController.image
-        imageView.setOnMouseClicked {
-            println("X: ${it.x} - Y: ${it.y} - sceneX: ${it.sceneX} - sceneY: ${it.sceneY} - screenX: ${it.screenX} - screenY: ${it.screenY}")
-           imageController.clickOnImage(it.x,it.y)
-        }
+
         scrollPane.setPrefSize(300.0, 250.0)
         scrollPane.vbarPolicy = ScrollBarPolicy.AS_NEEDED
         scrollPane.hbarPolicy = ScrollBarPolicy.AS_NEEDED
