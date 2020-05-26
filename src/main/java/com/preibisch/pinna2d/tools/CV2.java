@@ -17,11 +17,11 @@ public class CV2 {
     private static Core.MinMaxLocResult minMaxLoc;
 
 
-    public static float getValue(int x, int y) {
+    public static double getValue(int x, int y) {
         double[] val = original.get(y, x);
         Log.info(Utils.toString(val));
         CV2Helpers.changeValueColor(val[0], Color.CYAN);
-        return 0;
+        return val[0];
     }
 
     public static void init(String inputPath, String maskPath) {

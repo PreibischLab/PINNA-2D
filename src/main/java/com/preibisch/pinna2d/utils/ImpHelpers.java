@@ -17,7 +17,7 @@ import net.imglib2.view.Views;
 
 import java.io.File;
 
-public class ImgHelpers {
+public class ImpHelpers {
 
     public static void copy(final RandomAccessibleInterval<FloatType> source,
                             final RandomAccessibleInterval<FloatType> target) {
@@ -106,7 +106,7 @@ public class ImgHelpers {
     public static void printInfos(ImagePlus imp) {
         System.out.println("Stack: "+ imp.getStack().size());
         System.out.println("Channel: "+ imp.getChannel());
-        ImgHelpers.printDims(imp);
+        printDims(imp);
         System.out.println("Type: "+ imp.getType());
     }
 
@@ -114,8 +114,8 @@ public class ImgHelpers {
 
         final ImagePlus impOriginal = new Opener().openImage(original.getAbsolutePath());
         final ImagePlus impMask = new Opener().openImage(mask.getAbsolutePath());
-        ImgHelpers.printInfos(impOriginal);
-        ImgHelpers.printInfos(impMask);
+        printInfos(impOriginal);
+        printInfos(impMask);
 
         impOriginal.getStack().addSlice(impMask.getProcessor());
 

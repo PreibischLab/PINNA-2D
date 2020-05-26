@@ -1,7 +1,7 @@
 package com.preibisch.pinna2d.controllers
 
-import com.preibisch.pinna2d.tools.CV2
-import com.preibisch.pinna2d.tools.ImpHelper
+import com.preibisch.pinna2d.tools.Imp
+import com.preibisch.pinna2d.tools.Log
 import com.preibisch.pinna2d.util.randomColor
 import com.preibisch.pinna2d.view.MainAnnotationView
 import javafx.beans.property.SimpleStringProperty
@@ -30,14 +30,15 @@ class ImageController : Controller() {
     init {
         val input_path = MainAnnotationView::class.java.getResource("/img.tif").path
         val mask_path = MainAnnotationView::class.java.getResource("/mask.tif").path
-        val comp = ImpHelper.getComposite(File(input_path),File(mask_path))
+
+
 
         println(input_path)
 //        CV2.init(input_path,mask_path)
 //        println(mat.height())
 //        println(mat.width())
 //        image = CV2.getGUIImage()
-        image = ImpHelper.toImage(comp)
+        image = Imp.init(input_path,mask_path).toImage()
 
     }
 //    private var audioClip = AudioClip(MainView::class.java.getResource("/celestial-sound.wav").toExternalForm())
@@ -68,7 +69,9 @@ class ImageController : Controller() {
     }
 
     fun clickOnImage(x: Double, y: Double) {
-        val v : Float  = CV2.getValue(x.toInt(), y.toInt())
+//        val v : Float  = CV2.getValue(x.toInt(), y.toInt())
+        val v = Imp.get().getValue(x.toInt(),y.toInt())
+        Log.info("x: $x y: $y - Val :$v")
     }
 
 }
