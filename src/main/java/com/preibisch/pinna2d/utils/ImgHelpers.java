@@ -1,6 +1,10 @@
 package com.preibisch.pinna2d.utils;
 
+import ij.CompositeImage;
 import ij.ImagePlus;
+import ij.io.Opener;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccess;
@@ -10,6 +14,8 @@ import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
+
+import java.io.File;
 
 public class ImgHelpers {
 
@@ -95,7 +101,6 @@ public class ImgHelpers {
     public static void printDims(ImagePlus imp) {
         Img<FloatType> img = ImageJFunctions.wrap(imp);
         printDims(img);
-
     }
 
     public static void printInfos(ImagePlus imp) {
@@ -103,6 +108,23 @@ public class ImgHelpers {
         System.out.println("Channel: "+ imp.getChannel());
         ImgHelpers.printDims(imp);
         System.out.println("Type: "+ imp.getType());
+    }
 
+    public static CompositeImage getComposite(File original, File mask) {
+
+        final ImagePlus impOriginal = new Opener().openImage(original.getAbsolutePath());
+        final ImagePlus impMask = new Opener().openImage(mask.getAbsolutePath());
+        ImgHelpers.printInfos(impOriginal);
+        ImgHelpers.printInfos(impMask);
+
+        impOriginal.getStack().addSlice(impMask.getProcessor());
+
+        CompositeImage comp = new CompositeImage(impOriginal, CompositeImage.COMPOSITE);
+        return comp;
+    }
+
+    public static Image toImage(ImagePlus imp){
+        Image fxImage = SwingFXUtils.toFXImage(imp.getBufferedImage(), null);
+        return fxImage;
     }
 }
