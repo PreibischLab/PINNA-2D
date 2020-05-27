@@ -21,6 +21,8 @@ public class Imp extends  ImpHelpers {
     private final int clickViewChannel;
     private final int maskChannel;
     private final int categoryChannel;
+    private  UnsignedByteType min;
+    private  UnsignedByteType max;
     private CompositeImage gui_image;
     private Img<UnsignedByteType> img, original, mask, annotation;
 
@@ -67,6 +69,11 @@ public class Imp extends  ImpHelpers {
         this.maskChannel =  nchannels - 3;
          
         img = ImagePlusAdapter.wrap(gui_image);
+
+        this.min = img.firstElement().createVariable();
+        this.max = img.firstElement().createVariable();
+        computeMinMax(img,min,max);
+        Log.info("Min : "+getMin()+"  Max: "+getMax());
         gui_image.draw();
     }
 
@@ -77,7 +84,7 @@ public class Imp extends  ImpHelpers {
     public void set(int value){
         int dims = img.numDimensions()-1;
         IntervalView<UnsignedByteType> masks = Views.hyperSlice(img, dims, maskChannel);
-        IntervalView<UnsignedByteType> results = Views.hyperSlice(img, dims, categoryChannel);
+        IntervalView<UnsignedByteType> results = Views.hyperSlice(img, dims, clickViewChannel);
         setOnly(masks,results,value);
     }
 
@@ -102,6 +109,13 @@ public class Imp extends  ImpHelpers {
         CompositeImage comp = ImpHelpers.getComposite(f1, f2, 2);
 
         comp.show();
+    }
 
+    public int getMin() {
+        return min.getInteger();
+    }
+
+    public int getMax() {
+        return max.getInteger();
     }
 }

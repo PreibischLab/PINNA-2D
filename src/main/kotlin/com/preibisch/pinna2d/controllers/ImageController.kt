@@ -7,18 +7,15 @@ import com.preibisch.pinna2d.view.MainAnnotationView
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Point2D
 import javafx.scene.Node
-import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
-import org.opencv.core.Mat
 import tornadofx.*
-import java.io.File
-import kotlin.math.roundToInt
 
 
 class ImageController : Controller() {
+    val annotationController : AnnotationController by inject()
     val scrollFactor = 0.4
     private var circle = Circle()
     private var positionCircle = Circle()
@@ -32,17 +29,11 @@ class ImageController : Controller() {
         val input_path = MainAnnotationView::class.java.getResource("/img.tif").path
         val mask_path = MainAnnotationView::class.java.getResource("/mask.tif").path
 
-
-
         println(input_path)
-//        CV2.init(input_path,mask_path)
-//        println(mat.height())
-//        println(mat.width())
-//        image = CV2.getGUIImage()
-        imageView.image = Imp.init(input_path,mask_path).toImage()
 
+        imageView.image = Imp.init(input_path,mask_path).toImage()
+        annotationController.imgAnnotation("img.tif",Imp.get().min, Imp.get().max)
     }
-//    private var audioClip = AudioClip(MainView::class.java.getResource("/celestial-sound.wav").toExternalForm())
 
 
     fun addCircle(it: MouseEvent, root: Node) {
@@ -73,6 +64,7 @@ class ImageController : Controller() {
 //        val v : Float  = CV2.getValue(x.toInt(), y.toInt())
         val v = Imp.get().getValue(x.toInt(),y.toInt())
         Imp.get().set(v)
+        Imp.get().add(v,255)
 
 //        Imp.get().set(v,250)
 

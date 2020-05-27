@@ -5,6 +5,7 @@ import com.preibisch.pinna2d.model.AnnotationEntry
 import com.preibisch.pinna2d.model.AnnotationEntryModel
 import com.preibisch.pinna2d.model.AnnotationEntryTbl
 import com.preibisch.pinna2d.model.toAnnotationEntry
+import com.preibisch.pinna2d.tools.Log
 import com.preibisch.pinna2d.util.execute
 import com.preibisch.pinna2d.util.toDate
 import javafx.collections.FXCollections
@@ -86,6 +87,29 @@ class AnnotationController : Controller() {
         }
         listOfItems.remove(model)
 //        removeModelFromPie(model)
+    }
+
+    fun newEntry(img: String, min: Int, max: Int) {
+        for ( i in min..max){
+            add(LocalDate.now(),img,i,-1)
+
+        }
+    }
+
+    fun imgAnnotation(img: String, min: Int, max: Int) {
+        val exists = checkExist(img)
+        if(exists == false)
+            newEntry(img,min,max)
+    }
+
+    private fun checkExist(img: String): Boolean {
+        for(item in listOfItems){
+           if(item.imageName.value == img) {
+               Log.info("Image exist in database")
+               return true
+           }
+        }
+        return false;
     }
 
 //    fun updatePiecePie(model: ExpensesEntryModel){

@@ -20,6 +20,7 @@ import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 
 import java.io.File;
+import java.util.Iterator;
 
 public class ImpHelpers {
 
@@ -184,6 +185,32 @@ public class ImpHelpers {
             else {
                 randomAccess.get().set(0);
             }
+        }
+    }
+
+    public static < T extends Comparable< T > & Type< T > > void computeMinMax(
+            final Iterable< T > input, final T min, final T max )
+    {
+        // create a cursor for the image (the order does not matter)
+        final Iterator< T > iterator = input.iterator();
+
+        // initialize min and max with the first image value
+        T type = iterator.next();
+
+        min.set( type );
+        max.set( type );
+
+        // loop over the rest of the data and determine min and max value
+        while ( iterator.hasNext() )
+        {
+            // we need this type more than once
+            type = iterator.next();
+
+            if ( type.compareTo( min ) < 0 )
+                min.set( type );
+
+            if ( type.compareTo( max ) > 0 )
+                max.set( type );
         }
     }
 
