@@ -4,10 +4,13 @@ import com.preibisch.pinna2d.utils.ImpHelpers;
 import ij.CompositeImage;
 import ij.ImageJ;
 import javafx.scene.image.Image;
+import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.img.ImagePlusAdapter;
 import net.imglib2.img.Img;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
+import net.imglib2.view.IntervalView;
+import net.imglib2.view.Views;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import java.io.File;
@@ -31,7 +34,10 @@ public class Imp {
         return instance;
     }
 
-    public Image toImage(){
+    public Image toImage() {
+
+       gui_image.updateImage();
+       gui_image.updateAllChannelsAndDraw();
         return ImpHelpers.toImage(gui_image);
     }
 
@@ -42,12 +48,13 @@ public class Imp {
         if (!(f1.exists() && f2.exists()))
             throw new IOException("File not found");
 
-        gui_image = ImpHelpers.getComposite(f1, f2);
+        gui_image = ImpHelpers.getComposite(f1, f2,true);
         img = ImagePlusAdapter.wrap(gui_image);
+        gui_image.draw();
     }
 
     public int getValue(int x, int y) {
-        int maskPosition = gui_image.getNChannels() - 1;
+        int maskPosition = gui_image.getNChannels() - 2;
         RandomAccess<UnsignedByteType> cursor = img.randomAccess();
         cursor.setPosition(x, 0);
         cursor.setPosition(y, 1);
@@ -56,6 +63,37 @@ public class Imp {
 
         return val.getInteger();
     }
+
+    public void set(int value, int category){
+        int maskPosition = gui_image.getNChannels() - 2;
+
+        int categoriesPosition = gui_image.getNChannels() - 1;
+        int dims = img.numDimensions()-1;
+        IntervalView<UnsignedByteType> masks = Views.hyperSlice(img, dims, maskPosition);
+        IntervalView<UnsignedByteType> results = Views.hyperSlice(img, dims, categoriesPosition);
+
+        // create a cursor for both images
+        Cursor< UnsignedByteType > cursorInput = masks.cursor();
+
+        RandomAccess< UnsignedByteType > randomAccess = results.randomAccess();
+
+        // iterate over the input
+        while ( cursorInput.hasNext())
+        {
+            // move both cursors forward by one pixel
+            cursorInput.fwd();
+            if(cursorInput.get().getInteger() == value){
+                randomAccess.setPosition( cursorInput );
+                randomAccess.get().set(category);
+            }
+        }
+//        gui_image.updateImage();
+//        gui_image.repaintWindow();
+//        gui_image.updateAllChannelsAndDraw();
+    }
+
+
+
 
     public static void main(String[] args) throws IOException {
         new ImageJ();
@@ -68,7 +106,8 @@ public class Imp {
         if (!(f1.exists() && f2.exists()))
             throw new IOException("File not found");
 
-        CompositeImage comp = ImpHelpers.getComposite(f1, f2);
+        CompositeImage comp = ImpHelpers.getComposite(f1, f2, true);
+
         comp.show();
 
     }

@@ -44,6 +44,7 @@ class EventControllers : Controller() {
     private fun annotationEvent(it: MouseEvent, node: Node) {
         when (it.eventType) {
             MouseDragEvent.MOUSE_CLICKED -> {imageController.clickOnImage(it.x, it.y)
+
                 println("X: ${it.x} - Y: ${it.y} - sceneX: ${it.sceneX} - sceneY: ${it.sceneY} - screenX: ${it.screenX} - screenY: ${it.screenY}")
 
             }

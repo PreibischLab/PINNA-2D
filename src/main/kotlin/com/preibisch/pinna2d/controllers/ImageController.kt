@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
@@ -24,8 +25,8 @@ class ImageController : Controller() {
     var circleRadius = 15.0
     private var started = false
     var mText = SimpleStringProperty()
-
-    var image: Image
+    var imageView = ImageView()
+//    var image: Image
 
     init {
         val input_path = MainAnnotationView::class.java.getResource("/img.tif").path
@@ -38,7 +39,7 @@ class ImageController : Controller() {
 //        println(mat.height())
 //        println(mat.width())
 //        image = CV2.getGUIImage()
-        image = Imp.init(input_path,mask_path).toImage()
+        imageView.image = Imp.init(input_path,mask_path).toImage()
 
     }
 //    private var audioClip = AudioClip(MainView::class.java.getResource("/celestial-sound.wav").toExternalForm())
@@ -71,6 +72,10 @@ class ImageController : Controller() {
     fun clickOnImage(x: Double, y: Double) {
 //        val v : Float  = CV2.getValue(x.toInt(), y.toInt())
         val v = Imp.get().getValue(x.toInt(),y.toInt())
+        Imp.get().set(v,250)
+
+        imageView.image = Imp.get().toImage()
+//        imageView.rep
         Log.info("x: $x y: $y - Val :$v")
     }
 

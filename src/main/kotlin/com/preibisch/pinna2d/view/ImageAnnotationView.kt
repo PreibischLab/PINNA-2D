@@ -12,16 +12,16 @@ import tornadofx.*
 class ImageAnnotationView : View("Image View") {
     private val imageController: ImageController by inject()
     private var myLabel: Label by singleAssign()
-    private var imageView = ImageView()
+
     var scrollPane = ScrollPane()
     override val root = borderpane {
-        EventControllers().addEventsListners(imageView)
-        imageView.image = imageController.image
+        EventControllers().addEventsListners(imageController.imageView)
+//        imageView.image = imageController.image
 
         scrollPane.setPrefSize(300.0, 250.0)
         scrollPane.vbarPolicy = ScrollBarPolicy.AS_NEEDED
         scrollPane.hbarPolicy = ScrollBarPolicy.AS_NEEDED
-        scrollPane.content =  imageView
+        scrollPane.content =  imageController.imageView
         center = scrollPane
 
 //            label {

@@ -9,9 +9,12 @@ import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.ImagePlusAdapter;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.type.Type;
+import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.Views;
 
@@ -110,7 +113,7 @@ public class ImpHelpers {
         System.out.println("Type: "+ imp.getType());
     }
 
-    public static CompositeImage getComposite(File original, File mask) {
+    public static  < T extends Type< T >>  CompositeImage getComposite(File original, File mask, boolean addExtra) {
 
         final ImagePlus impOriginal = new Opener().openImage(original.getAbsolutePath());
         final ImagePlus impMask = new Opener().openImage(mask.getAbsolutePath());
@@ -119,9 +122,16 @@ public class ImpHelpers {
 
         impOriginal.getStack().addSlice(impMask.getProcessor());
 
+        if(addExtra){
+            Img<UnsignedByteType> input = ImagePlusAdapter.wrap(impMask);
+            Img<UnsignedByteType > output = input.factory().create( input );
+            impOriginal.getStack().addSlice(ImageJFunctions.wrap(output,"Classification").getProcessor());
+        }
+
         CompositeImage comp = new CompositeImage(impOriginal, CompositeImage.COMPOSITE);
         return comp;
     }
+
 
     public static Image toImage(ImagePlus imp){
         Image fxImage = SwingFXUtils.toFXImage(imp.getBufferedImage(), null);
