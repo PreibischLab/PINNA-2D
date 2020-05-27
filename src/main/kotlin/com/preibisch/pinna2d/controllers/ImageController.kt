@@ -72,7 +72,9 @@ class ImageController : Controller() {
     fun clickOnImage(x: Double, y: Double) {
 //        val v : Float  = CV2.getValue(x.toInt(), y.toInt())
         val v = Imp.get().getValue(x.toInt(),y.toInt())
-        Imp.get().set(v,250)
+        Imp.get().set(v)
+
+//        Imp.get().set(v,250)
 
         imageView.image = Imp.get().toImage()
 //        imageView.rep

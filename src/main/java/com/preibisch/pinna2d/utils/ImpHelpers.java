@@ -16,6 +16,7 @@ import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.numeric.real.FloatType;
+import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 
 import java.io.File;
@@ -113,7 +114,11 @@ public class ImpHelpers {
         System.out.println("Type: "+ imp.getType());
     }
 
-    public static  < T extends Type< T >>  CompositeImage getComposite(File original, File mask, boolean addExtra) {
+    public static  < T extends Type< T >>  CompositeImage getComposite(File original, File mask) {
+       return getComposite(original,mask,0);
+    }
+
+    public static  < T extends Type< T >>  CompositeImage getComposite(File original, File mask, int extras) {
 
         final ImagePlus impOriginal = new Opener().openImage(original.getAbsolutePath());
         final ImagePlus impMask = new Opener().openImage(mask.getAbsolutePath());
@@ -122,10 +127,11 @@ public class ImpHelpers {
 
         impOriginal.getStack().addSlice(impMask.getProcessor());
 
-        if(addExtra){
+        if(extras>0){
             Img<UnsignedByteType> input = ImagePlusAdapter.wrap(impMask);
             Img<UnsignedByteType > output = input.factory().create( input );
-            impOriginal.getStack().addSlice(ImageJFunctions.wrap(output,"Classification").getProcessor());
+            for(int i =0; i<extras;i++)
+                impOriginal.getStack().addSlice(ImageJFunctions.wrap(output.copy(),String.valueOf(i)).getProcessor());
         }
 
         CompositeImage comp = new CompositeImage(impOriginal, CompositeImage.COMPOSITE);
@@ -137,4 +143,48 @@ public class ImpHelpers {
         Image fxImage = SwingFXUtils.toFXImage(imp.getBufferedImage(), null);
         return fxImage;
     }
+
+    public static int getValue(Img<UnsignedByteType> img,int x, int y, int channel){
+        RandomAccess<UnsignedByteType> cursor = img.randomAccess();
+        cursor.setPosition(x, 0);
+        cursor.setPosition(y, 1);
+        cursor.setPosition(channel, 2);
+        UnsignedByteType val = cursor.get();
+        return val.getInteger();
+    }
+
+    public static void add(IntervalView<UnsignedByteType> masks, IntervalView<UnsignedByteType> result, int value, int category){
+        Cursor< UnsignedByteType > cursorInput = masks.cursor();
+
+        RandomAccess< UnsignedByteType > randomAccess = result.randomAccess();
+
+        while ( cursorInput.hasNext())
+        {
+            cursorInput.fwd();
+            if(cursorInput.get().getInteger() == value){
+                randomAccess.setPosition( cursorInput );
+                randomAccess.get().set(category);
+            }
+        }
+    }
+
+
+    public static void setOnly(IntervalView<UnsignedByteType> masks, IntervalView<UnsignedByteType> result, int value){
+        Cursor< UnsignedByteType > cursorInput = masks.cursor();
+
+        RandomAccess< UnsignedByteType > randomAccess = result.randomAccess();
+
+        while ( cursorInput.hasNext())
+        {
+            cursorInput.fwd();
+            randomAccess.setPosition( cursorInput );
+            if(cursorInput.get().getInteger() == value){
+                randomAccess.get().set(255);
+            }
+            else {
+                randomAccess.get().set(0);
+            }
+        }
+    }
+
 }
