@@ -10,7 +10,7 @@ import javafx.stage.Stage
 import org.jetbrains.exposed.sql.Database
 import tornadofx.*
 
-class MyApp: App(MainAnnotationView::class, Styles::class){
+class MyApp: App(AnnotationWorkspace::class, Styles::class){
 
     val eventControllers : EventControllers by inject()
 

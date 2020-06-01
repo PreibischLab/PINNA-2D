@@ -1,14 +1,14 @@
 package com.preibisch.pinna2d.app
 
 import javafx.scene.text.FontWeight
-import tornadofx.Stylesheet
-import tornadofx.box
-import tornadofx.cssclass
-import tornadofx.px
+import tornadofx.*
 
 class Styles : Stylesheet() {
     companion object {
         val heading by cssclass()
+        val validColumn by cssclass()
+        val invalidColumn by cssclass()
+        val category by cssclass()
     }
 
     init {
@@ -17,5 +17,13 @@ class Styles : Stylesheet() {
             fontSize = 20.px
             fontWeight = FontWeight.BOLD
         }
+
+        invalidColumn {
+            backgroundColor += c("#8b0000")
+        }
+        validColumn and category {
+            backgroundColor += c("#00b200")
+        }
+
     }
 }

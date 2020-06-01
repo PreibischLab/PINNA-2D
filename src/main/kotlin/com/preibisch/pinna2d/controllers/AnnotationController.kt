@@ -23,6 +23,7 @@ class AnnotationController : Controller() {
 
     //    get All Items
     private val listOfItems: ObservableList<AnnotationEntryModel> = execute {
+//        .orderBy(AnnotationEntryTbl.annotationVal)
         AnnotationEntryTbl.selectAll().map {
             AnnotationEntryModel().apply {
                 item = it.toAnnotationEntry()
@@ -35,6 +36,7 @@ class AnnotationController : Controller() {
 
     init {
         items = listOfItems
+        items
         //test
 //        add(LocalDate.now(),"test1",1,1)
 //        add(LocalDate.now(),"test1",2,3)
