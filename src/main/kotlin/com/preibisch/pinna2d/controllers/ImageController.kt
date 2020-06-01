@@ -12,10 +12,11 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import tornadofx.*
+import java.io.File
 
 
 class ImageController : Controller() {
-    val annotationController : AnnotationController by inject()
+    val annotationController: AnnotationController by inject()
     val scrollFactor = 0.4
     private var circle = Circle()
     private var positionCircle = Circle()
@@ -23,6 +24,7 @@ class ImageController : Controller() {
     private var started = false
     var mText = SimpleStringProperty()
     var imageView = ImageView()
+    var currentCategory = 0;
 //    var image: Image
 
     init {
@@ -31,8 +33,8 @@ class ImageController : Controller() {
 
         println(input_path)
 
-        imageView.image = Imp.init(input_path,mask_path).toImage()
-        annotationController.imgAnnotation("img.tif",Imp.get().min, Imp.get().max)
+        imageView.image = Imp.init(input_path, mask_path).toImage()
+        annotationController.imgAnnotation("img.tif", Imp.get().min, Imp.get().max)
     }
 
 
@@ -62,16 +64,35 @@ class ImageController : Controller() {
 
     fun clickOnImage(x: Double, y: Double) {
 //        val v : Float  = CV2.getValue(x.toInt(), y.toInt())
-        val v = Imp.get().getValue(x.toInt(),y.toInt())
-        if (v>0) {
-            Imp.get().set(v)
-            Imp.get().add(v, 255)
+        val v = Imp.get().getValue(x.toInt(), y.toInt())
+        if (v > 0) {
+            annotationController.select(v)
+            select(v)
         }
 //        Imp.get().set(v,250)
 
-        imageView.image = Imp.get().toImage()
+
 //        imageView.rep
         Log.info("x: $x y: $y - Val :$v")
     }
+
+
+    fun save(file: File) {
+        Imp.get().save(file)
+    }
+
+    fun select(v: Int) {
+        if (v > 0) {
+              Imp.get().set(v)
+            //        Imp.get().add(v, currentCategory)
+//        currentCategory += 1
+//        if(currentCategory>2)
+//            currentCategory = 0;
+            imageView.image = Imp.get().toImage()
+
+        }
+
+    }
+
 
 }

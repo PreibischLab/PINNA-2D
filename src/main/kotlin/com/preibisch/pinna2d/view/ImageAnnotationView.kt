@@ -1,16 +1,20 @@
 package com.preibisch.pinna2d.view
 
+import com.preibisch.pinna2d.controllers.AnnotationController
 import com.preibisch.pinna2d.controllers.EventControllers
 import com.preibisch.pinna2d.controllers.ImageController
 import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.ScrollPane.ScrollBarPolicy
-import javafx.scene.image.ImageView
 import tornadofx.*
+import java.io.File
 
 
 class ImageAnnotationView : View("Image View") {
+
+
     private val imageController: ImageController by inject()
+
     private var myLabel: Label by singleAssign()
 
     var scrollPane = ScrollPane()
@@ -40,7 +44,9 @@ class ImageAnnotationView : View("Image View") {
 //        }
 
     }
-
+    fun save(file: File) {
+        imageController.save(file)
+    }
 
 }
 

@@ -11,6 +11,7 @@ import com.preibisch.pinna2d.util.toDate
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.chart.PieChart
+import javafx.scene.control.TableView
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
@@ -20,7 +21,7 @@ import java.time.LocalDate
 
 class AnnotationController : Controller() {
     var annotationsModel = AnnotationEntryModel()
-
+    var tableview: TableView<AnnotationEntryModel> by singleAssign()
     //    get All Items
     private val listOfItems: ObservableList<AnnotationEntryModel> = execute {
 //        .orderBy(AnnotationEntryTbl.annotationVal)
@@ -112,6 +113,21 @@ class AnnotationController : Controller() {
            }
         }
         return false;
+    }
+
+
+    fun select(v: Int) {
+        var position = 0;
+        loop@ for (it in tableview.items) {
+            if (it.annotationId.value == v)
+                break@loop;
+
+            position++;
+        }
+        if (position >= tableview.items.size)
+            Log.error("Not found $v")
+        else
+            tableview.selectionModel.select(position)
     }
 
 //    fun updatePiecePie(model: ExpensesEntryModel){

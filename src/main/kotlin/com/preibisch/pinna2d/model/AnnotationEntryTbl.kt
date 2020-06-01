@@ -60,6 +60,5 @@ class AnnotationEntryModel : ItemViewModel<AnnotationEntry>() {
     val imageName = bind { item?.imageNameProperty }
     val annotationId = bind { item?.annotationIdProperty }
     val annotationVal = bind { item?.annotationValProperty }
-//    var totalExpenses = itemProperty.select(ExpensesEntry::totalExpenses)
 }
 

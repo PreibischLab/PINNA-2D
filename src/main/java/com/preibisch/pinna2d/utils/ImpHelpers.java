@@ -1,8 +1,13 @@
 package com.preibisch.pinna2d.utils;
 
+import com.preibisch.pinna2d.tools.Log;
 import ij.CompositeImage;
 import ij.ImagePlus;
+import ij.VirtualStack;
+import ij.io.FileInfo;
+import ij.io.FileSaver;
 import ij.io.Opener;
+import ij.io.TiffEncoder;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import net.imglib2.Cursor;
@@ -19,7 +24,7 @@ import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 
-import java.io.File;
+import java.io.*;
 import java.util.Iterator;
 
 public class ImpHelpers {
@@ -92,7 +97,7 @@ public class ImpHelpers {
     public static <T> void printDims(RandomAccessibleInterval<T> img) {
         long[] dims = getDims(img);
         String string = toString(dims);
-        System.out.println("Dims: " +img.numDimensions() + "-" + string);
+        System.out.println("Dims: " + img.numDimensions() + "-" + string);
 
     }
 
@@ -109,17 +114,17 @@ public class ImpHelpers {
     }
 
     public static void printInfos(ImagePlus imp) {
-        System.out.println("Stack: "+ imp.getStack().size());
-        System.out.println("Channel: "+ imp.getChannel());
+        System.out.println("Stack: " + imp.getStack().size());
+        System.out.println("Channel: " + imp.getChannel());
         printDims(imp);
-        System.out.println("Type: "+ imp.getType());
+        System.out.println("Type: " + imp.getType());
     }
 
-    public static  < T extends Type< T >>  CompositeImage getComposite(File original, File mask) {
-       return getComposite(original,mask,0);
+    public static <T extends Type<T>> CompositeImage getComposite(File original, File mask) {
+        return getComposite(original, mask, 0);
     }
 
-    public static  < T extends Type< T >>  CompositeImage getComposite(File original, File mask, int extras) {
+    public static <T extends Type<T>> CompositeImage getComposite(File original, File mask, int extras) {
 
         final ImagePlus impOriginal = new Opener().openImage(original.getAbsolutePath());
         final ImagePlus impMask = new Opener().openImage(mask.getAbsolutePath());
@@ -128,11 +133,11 @@ public class ImpHelpers {
 
         impOriginal.getStack().addSlice(impMask.getProcessor());
 
-        if(extras>0){
+        if (extras > 0) {
             Img<UnsignedByteType> input = ImagePlusAdapter.wrap(impMask);
-            Img<UnsignedByteType > output = input.factory().create( input );
-            for(int i =0; i<extras;i++)
-                impOriginal.getStack().addSlice(ImageJFunctions.wrap(output.copy(),String.valueOf(i)).getProcessor());
+            Img<UnsignedByteType> output = input.factory().create(input);
+            for (int i = 0; i < extras; i++)
+                impOriginal.getStack().addSlice(ImageJFunctions.wrap(output.copy(), String.valueOf(i)).getProcessor());
         }
 
         CompositeImage comp = new CompositeImage(impOriginal, CompositeImage.COMPOSITE);
@@ -140,12 +145,12 @@ public class ImpHelpers {
     }
 
 
-    public static Image toImage(ImagePlus imp){
+    public static Image toImage(ImagePlus imp) {
         Image fxImage = SwingFXUtils.toFXImage(imp.getBufferedImage(), null);
         return fxImage;
     }
 
-    public static int getValue(Img<UnsignedByteType> img,int x, int y, int channel){
+    public static int getValue(Img<UnsignedByteType> img, int x, int y, int channel) {
         RandomAccess<UnsignedByteType> cursor = img.randomAccess();
         cursor.setPosition(x, 0);
         cursor.setPosition(y, 1);
@@ -154,64 +159,94 @@ public class ImpHelpers {
         return val.getInteger();
     }
 
-    public static void add(IntervalView<UnsignedByteType> masks, IntervalView<UnsignedByteType> result, int value, int category){
-        Cursor< UnsignedByteType > cursorInput = masks.cursor();
+    public static void add(IntervalView<UnsignedByteType> masks, IntervalView<UnsignedByteType> result, int value, int category) {
+        Cursor<UnsignedByteType> cursorInput = masks.cursor();
 
-        RandomAccess< UnsignedByteType > randomAccess = result.randomAccess();
+        RandomAccess<UnsignedByteType> randomAccess = result.randomAccess();
 
-        while ( cursorInput.hasNext())
-        {
+        while (cursorInput.hasNext()) {
             cursorInput.fwd();
-            if(cursorInput.get().getInteger() == value){
-                randomAccess.setPosition( cursorInput );
+            if (cursorInput.get().getInteger() == value) {
+                randomAccess.setPosition(cursorInput);
                 randomAccess.get().set(category);
             }
         }
     }
 
 
-    public static void setOnly(IntervalView<UnsignedByteType> masks, IntervalView<UnsignedByteType> result, int value){
-        Cursor< UnsignedByteType > cursorInput = masks.cursor();
-
-        RandomAccess< UnsignedByteType > randomAccess = result.randomAccess();
-
-        while ( cursorInput.hasNext())
-        {
+    public static void setOnly(IntervalView<UnsignedByteType> masks, IntervalView<UnsignedByteType> result, int value, int setValue) {
+        Cursor<UnsignedByteType> cursorInput = masks.cursor();
+        RandomAccess<UnsignedByteType> randomAccess = result.randomAccess();
+        while (cursorInput.hasNext()) {
             cursorInput.fwd();
-            randomAccess.setPosition( cursorInput );
-            if(cursorInput.get().getInteger() == value){
-                randomAccess.get().set(255);
-            }
-            else {
+            randomAccess.setPosition(cursorInput);
+            if (cursorInput.get().getInteger() == value)
+                randomAccess.get().set(setValue);
+            else
                 randomAccess.get().set(0);
-            }
         }
     }
 
-    public static < T extends Comparable< T > & Type< T > > void computeMinMax(
-            final Iterable< T > input, final T min, final T max )
-    {
+    public static <T extends Comparable<T> & Type<T>> void computeMinMax(
+            final Iterable<T> input, final T min, final T max) {
         // create a cursor for the image (the order does not matter)
-        final Iterator< T > iterator = input.iterator();
+        final Iterator<T> iterator = input.iterator();
 
         // initialize min and max with the first image value
         T type = iterator.next();
 
-        min.set( type );
-        max.set( type );
+        min.set(type);
+        max.set(type);
 
         // loop over the rest of the data and determine min and max value
-        while ( iterator.hasNext() )
-        {
+        while (iterator.hasNext()) {
             // we need this type more than once
             type = iterator.next();
 
-            if ( type.compareTo( min ) < 0 )
-                min.set( type );
+            if (type.compareTo(min) < 0)
+                min.set(type);
 
-            if ( type.compareTo( max ) > 0 )
-                max.set( type );
+            if (type.compareTo(max) > 0)
+                max.set(type);
         }
     }
 
+    public static void save(IntervalView<UnsignedByteType> view, File file) {
+        ImagePlus imp = ImageJFunctions.wrap(view, "Categories");
+        imp.show();
+        saveTiffStack(imp,file);
+
+    }
+
+    /*
+     * Reimplementation from ImageJ FileSaver class. Necessary since it traverses
+     * the entire virtual stack once to collect some slice labels, which takes
+     * forever in this case.
+     */
+    public static boolean saveTiffStack(final ImagePlus imp, final File f) {
+        FileInfo fi = imp.getFileInfo();
+        boolean virtualStack = imp.getStack().isVirtual();
+        if (virtualStack)
+            fi.virtualStack = (VirtualStack) imp.getStack();
+        fi.info = imp.getInfoProperty();
+        fi.description = new FileSaver(imp).getDescriptionString();
+        DataOutputStream out = null;
+        try {
+            TiffEncoder file = new TiffEncoder(fi);
+            out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(f)));
+            file.write(out);
+            out.close();
+        } catch (IOException e) {
+            Log.error(": ERROR: Cannot save file '" + f.getAbsolutePath() + "':" + e);
+            return false;
+        } finally {
+            if (out != null)
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    Log.error(e.toString());
+                }
+        }
+        return true;
+    }
 }

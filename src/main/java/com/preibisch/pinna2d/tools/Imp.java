@@ -9,12 +9,15 @@ import net.imglib2.img.Img;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 
 //< T extends RealType< T > & NativeType< T >>
 public class Imp extends  ImpHelpers {
+    private final static int[] VALS = {100,190,255};
+    private final static int CLICK_VALUE = 255 ;
     public final static int WITH_CLICK = 2 , WITHOUT_CLICK = 1 ;
     private static Imp instance;
     private final int mode;
@@ -43,7 +46,6 @@ public class Imp extends  ImpHelpers {
     }
 
     public Image toImage() {
-
        gui_image.updateImage();
        gui_image.updateAllChannelsAndDraw();
         return ImpHelpers.toImage(gui_image);
@@ -63,11 +65,14 @@ public class Imp extends  ImpHelpers {
         }
         this.mode = mode;
         gui_image = ImpHelpers.getComposite(f1, f2,mode);
+
+//        gui_image.setChannelLut(LUT.createLutFromColor(Color.CYAN),4);
         final int nchannels = gui_image.getNChannels();
+        Log.info("Channels: "+nchannels);
         this.clickViewChannel = nchannels - 1;
         this.categoryChannel = nchannels - 2;
         this.maskChannel =  nchannels - 3;
-         
+//        gui_image.setDisplayRange(0,100,7);
         img = ImagePlusAdapter.wrap(gui_image);
 
         this.min = img.firstElement().createVariable();
@@ -83,16 +88,17 @@ public class Imp extends  ImpHelpers {
 
     public void set(int value){
         int dims = img.numDimensions()-1;
+
         IntervalView<UnsignedByteType> masks = Views.hyperSlice(img, dims, maskChannel);
         IntervalView<UnsignedByteType> results = Views.hyperSlice(img, dims, clickViewChannel);
-        setOnly(masks,results,value);
+        setOnly(masks,results,value,CLICK_VALUE);
     }
 
     public void add(int value, int category){
         int dims = img.numDimensions()-1;
         IntervalView<UnsignedByteType> masks = Views.hyperSlice(img, dims, maskChannel);
         IntervalView<UnsignedByteType> results = Views.hyperSlice(img, dims, categoryChannel);
-        add(masks,results,value,category);
+        add(masks,results,value,VALS[category]);
     }
 
     public static void main(String[] args) throws IOException {
@@ -117,5 +123,11 @@ public class Imp extends  ImpHelpers {
 
     public int getMax() {
         return max.getInteger();
+    }
+
+    public void save(@NotNull File file) {
+        int dims = img.numDimensions()-1;
+        IntervalView<UnsignedByteType> view = Views.hyperSlice(img, dims, categoryChannel);
+        save(view,file);
     }
 }
