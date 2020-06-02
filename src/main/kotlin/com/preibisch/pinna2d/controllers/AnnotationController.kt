@@ -22,14 +22,14 @@ class AnnotationController : Controller() {
     var annotationsModel = AnnotationEntryModel()
     var tableview: TableView<AnnotationEntryModel> by singleAssign()
     //    get All Items
-//    private val listOfItems: ObservableList<AnnotationEntryModel> = execute {
-////        .orderBy(AnnotationEntryTbl.annotationVal)
-//        AnnotationEntryTbl.selectAll().map {
-//            AnnotationEntryModel().apply {
-//                item = it.toAnnotationEntry()
-//            }
-//        }.observable()
-//    }
+    private val listOfItems: ObservableList<AnnotationEntryModel> = execute {
+//        .orderBy(AnnotationEntryTbl.annotationVal)
+        AnnotationEntryTbl.selectAll().map {
+            AnnotationEntryModel().apply {
+                item = it.toAnnotationEntry()
+            }
+        }.observable()
+    }
 
     var items : ObservableList<AnnotationEntryModel> by singleAssign()
 //    var pieItemsData = FXCollections.observableArrayList<PieChart.Data>()
@@ -82,6 +82,7 @@ class AnnotationController : Controller() {
                 it[annotationVal] = updatedItem.annotationVal.value.toInt()
             }
         }
+
     }
 
     fun delete(model: AnnotationEntryModel) {
@@ -121,7 +122,7 @@ class AnnotationController : Controller() {
 
 
     private fun checkExist(img: String): Boolean {
-        for(item in items){
+        for(item in listOfItems){
            if(item.imageName.value == img) {
                Log.info("Image exist in database")
                return true

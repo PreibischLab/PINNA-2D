@@ -67,7 +67,7 @@ class ImageController : Controller() {
             annotationController.select(v)
             select(v)
         }
-//        Imp.get().set(v,250)
+//
 
 
 //        imageView.rep

@@ -4,6 +4,7 @@ import com.preibisch.pinna2d.app.Styles
 import com.preibisch.pinna2d.controllers.AnnotationController
 import com.preibisch.pinna2d.controllers.ImageController
 import com.preibisch.pinna2d.model.AnnotationEntryModel
+import com.preibisch.pinna2d.tools.Imp
 import com.preibisch.pinna2d.util.CATEGORIES
 import com.preibisch.pinna2d.util.getColor
 import javafx.scene.control.ToggleButton
@@ -66,6 +67,7 @@ class AnnotationEditorView : View("Annotations") {
 //                    selectionModel.select(10)
 
                     onSelectionChange {
+
                         if (it != null) {
                             model.id.value = it.id.value
                             model.entryDate.value = it.entryDate.value
@@ -125,10 +127,15 @@ class AnnotationEditorView : View("Annotations") {
     }
 
     private fun changeCategory(category: Int) {
-
         println("change category $category")
         model.annotationVal.value = category
+        for (it in controller.items) {
+            if (it.id.value == model.id.value)
+                it.annotationVal.value = category
+        }
         controller.update(model)
+        controller.tableview.selectionModel.selectNext()
+        Imp.get().add(model.annotationId.value.toInt(),model.annotationVal.value.toInt())
 //        controller.items.up
     }
 }
