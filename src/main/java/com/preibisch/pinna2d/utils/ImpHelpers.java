@@ -209,6 +209,7 @@ public class ImpHelpers {
             if (type.compareTo(max) > 0)
                 max.set(type);
         }
+
     }
 
     public static void save(IntervalView<UnsignedByteType> view, File file) {

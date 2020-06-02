@@ -23,6 +23,7 @@ fun ResultRow.toAnnotationEntry() = AnnotationEntry(
 )
 
 object AnnotationEntryTbl : Table() {
+
     val id = integer("id").autoIncrement().primaryKey()
     val entryDate = date("entry_date")
     val imageName = varchar("image_name", length = 100)

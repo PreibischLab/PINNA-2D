@@ -12,32 +12,34 @@ import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.chart.PieChart
 import javafx.scene.control.TableView
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.*
 import tornadofx.*
+import tornadofx.select
 import java.time.LocalDate
+import java.util.*
 
 class AnnotationController : Controller() {
     var annotationsModel = AnnotationEntryModel()
     var tableview: TableView<AnnotationEntryModel> by singleAssign()
     //    get All Items
-    private val listOfItems: ObservableList<AnnotationEntryModel> = execute {
-//        .orderBy(AnnotationEntryTbl.annotationVal)
-        AnnotationEntryTbl.selectAll().map {
-            AnnotationEntryModel().apply {
-                item = it.toAnnotationEntry()
-            }
-        }.observable()
-    }
+//    private val listOfItems: ObservableList<AnnotationEntryModel> = execute {
+////        .orderBy(AnnotationEntryTbl.annotationVal)
+//        AnnotationEntryTbl.selectAll().map {
+//            AnnotationEntryModel().apply {
+//                item = it.toAnnotationEntry()
+//            }
+//        }.observable()
+//    }
 
-    var items: ObservableList<AnnotationEntryModel> by singleAssign()
+    var items : ObservableList<AnnotationEntryModel> by singleAssign()
 //    var pieItemsData = FXCollections.observableArrayList<PieChart.Data>()
 
     init {
-        items = listOfItems
-        items
+//        listOf<AnnotationEntryModel>().observable()
+        items = FXCollections.observableArrayList();
+
+//        items = listOfItems
+//        items
         //test
 //        add(LocalDate.now(),"test1",1,1)
 //        add(LocalDate.now(),"test1",2,3)
@@ -62,7 +64,7 @@ class AnnotationController : Controller() {
                 it[annotationVal] = newAnnotationVal
             }
         }
-        listOfItems.add(AnnotationEntryModel().apply {
+        items.add(AnnotationEntryModel().apply {
             item = AnnotationEntry(newEntry[AnnotationEntryTbl.id], newEntryDate, newImageName,newAnnotationId,newAnnotationVal)
         })
 //        pieItemsData.add(PieChart.Data(newItem,newPrice))
@@ -88,7 +90,7 @@ class AnnotationController : Controller() {
                 AnnotationEntryTbl.id eq (model.id.value.toInt())
             }
         }
-        listOfItems.remove(model)
+        items.remove(model)
 //        removeModelFromPie(model)
     }
 
@@ -99,14 +101,27 @@ class AnnotationController : Controller() {
         }
     }
 
-    fun imgAnnotation(img: String, min: Int, max: Int) {
-        val exists = checkExist(img)
+    fun start(imageName: String, min: Int, max: Int) {
+//        items.removeAll()
+//        items = FXCollections.observableArrayList();
+        val exists = checkExist(imageName)
         if(exists == false)
-            newEntry(img,min,max)
+            newEntry(imageName,min,max)
+
+       val newItems =  execute {
+//        .orderBy(AnnotationEntryTbl.annotationVal)
+            AnnotationEntryTbl.select { AnnotationEntryTbl.imageName eq imageName }.map {
+                AnnotationEntryModel().apply {
+                    item = it.toAnnotationEntry()
+                }
+            }
+        }
+        items.addAll(newItems.observable())
     }
 
+
     private fun checkExist(img: String): Boolean {
-        for(item in listOfItems){
+        for(item in items){
            if(item.imageName.value == img) {
                Log.info("Image exist in database")
                return true
@@ -129,6 +144,7 @@ class AnnotationController : Controller() {
         else
             tableview.selectionModel.select(position)
     }
+
 
 //    fun updatePiecePie(model: ExpensesEntryModel){
 //        var modelId = model.id

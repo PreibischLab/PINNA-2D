@@ -5,6 +5,8 @@ import tornadofx.*
 
 class Styles : Stylesheet() {
     companion object {
+        val fieldStyle by cssclass()
+        val inputButtonStyle by cssclass()
         val heading by cssclass()
         val validColumn by cssclass()
         val invalidColumn by cssclass()
@@ -18,6 +20,13 @@ class Styles : Stylesheet() {
             fontWeight = FontWeight.BOLD
         }
 
+        inputButtonStyle{
+
+        }
+
+        fieldStyle{
+            prefWidth = 300.px
+        }
         invalidColumn {
             backgroundColor += c("#8b0000")
         }

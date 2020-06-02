@@ -4,6 +4,7 @@ import com.preibisch.pinna2d.controllers.AnnotationController
 import com.preibisch.pinna2d.controllers.EventControllers
 import com.preibisch.pinna2d.util.createTables
 import com.preibisch.pinna2d.util.enableConsoleLogger
+import com.preibisch.pinna2d.view.InputView
 import com.preibisch.pinna2d.view.MainAnnotationView
 import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
@@ -18,8 +19,8 @@ class MyApp: App(AnnotationWorkspace::class, Styles::class){
     override fun start(stage: Stage) {
 
         with(stage){
-            width = 1000.0
-            height = 800.0
+//            width = 1000.0
+//            height = 800.0
 //            scene.setOnKeyPressed {
 //                println("pressed:" + it.character)
 //            }

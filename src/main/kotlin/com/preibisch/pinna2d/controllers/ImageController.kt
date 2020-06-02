@@ -3,7 +3,6 @@ package com.preibisch.pinna2d.controllers
 import com.preibisch.pinna2d.tools.Imp
 import com.preibisch.pinna2d.tools.Log
 import com.preibisch.pinna2d.util.randomColor
-import com.preibisch.pinna2d.view.MainAnnotationView
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Point2D
 import javafx.scene.Node
@@ -28,13 +27,12 @@ class ImageController : Controller() {
 //    var image: Image
 
     init {
-        val input_path = MainAnnotationView::class.java.getResource("/img.tif").path
-        val mask_path = MainAnnotationView::class.java.getResource("/mask.tif").path
 
-        println(input_path)
+    }
 
-        imageView.image = Imp.init(input_path, mask_path).toImage()
-        annotationController.imgAnnotation("img.tif", Imp.get().min, Imp.get().max)
+
+    fun start(input: String, mask: String, imageName: String){
+        imageView.image = Imp.init(input, mask).toImage()
     }
 
 

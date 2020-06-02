@@ -1,5 +1,7 @@
 package com.preibisch.pinna2d.view
 
+import com.preibisch.pinna2d.controllers.ImageController
+import com.preibisch.pinna2d.controllers.InstanceController
 import com.preibisch.pinna2d.tools.Log
 import javafx.stage.FileChooser
 import tornadofx.*
@@ -11,10 +13,25 @@ class MainAnnotationView : View("Annotation") {
     private val annotationEditorView: AnnotationEditorView by inject()
     override val root = borderpane() {
         setPrefSize(1000.0, 500.0)
+
         center = imageView.root
         left = annotationEditorView.root
     }
 
+    override fun onCreate() {
+        val inputView = InputView()
+        inputView.openWindow()
+//        inputView.onBeforeShow()
+
+    }
+
+    override fun onRefresh() {
+        super.onRefresh()
+    }
+
+    override fun onDelete() {
+        super.onDelete()
+    }
     override fun onSave() {
         Log.info("save")
         var chooser = FileChooser()

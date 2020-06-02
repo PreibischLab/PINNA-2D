@@ -12,9 +12,7 @@ import java.io.File
 
 class ImageAnnotationView : View("Image View") {
 
-
     private val imageController: ImageController by inject()
-
     private var myLabel: Label by singleAssign()
 
     var scrollPane = ScrollPane()
