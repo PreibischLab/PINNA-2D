@@ -108,16 +108,18 @@ class AnnotationController : Controller() {
         val exists = checkExist(imageName)
         if(exists == false)
             newEntry(imageName,min,max)
+        else {
 
-       val newItems =  execute {
+            val newItems = execute {
 //        .orderBy(AnnotationEntryTbl.annotationVal)
-            AnnotationEntryTbl.select { AnnotationEntryTbl.imageName eq imageName }.map {
-                AnnotationEntryModel().apply {
-                    item = it.toAnnotationEntry()
+                AnnotationEntryTbl.select { AnnotationEntryTbl.imageName eq imageName }.map {
+                    AnnotationEntryModel().apply {
+                        item = it.toAnnotationEntry()
+                    }
                 }
             }
+            items.addAll(newItems.observable())
         }
-        items.addAll(newItems.observable())
     }
 
 

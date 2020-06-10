@@ -128,6 +128,8 @@ public class ImpHelpers {
 
         final ImagePlus impOriginal = new Opener().openImage(original.getAbsolutePath());
         final ImagePlus impMask = new Opener().openImage(mask.getAbsolutePath());
+        // IMP Convert to float
+       new ImagePlus("float" ,impMask.getProcessor().convertToFloatProcessor() );
         printInfos(impOriginal);
         printInfos(impMask);
 
@@ -139,6 +141,9 @@ public class ImpHelpers {
             for (int i = 0; i < extras; i++)
                 impOriginal.getStack().addSlice(ImageJFunctions.wrap(output.copy(), String.valueOf(i)).getProcessor());
         }
+    impOriginal.setDimensions(impOriginal.getStackSize(), 1, 1);
+        //Code from Stephan
+//        for ( int i = 0; i < imp.getStackSize(); ++i ) 		{ 		imp.getStack().getProcessor( i + 1 ).setColor( Color.GREEN ); 		imp.getStack().getProcessor( i + 1 ).setMinAndMax( min, max ); 		}
 
         CompositeImage comp = new CompositeImage(impOriginal, CompositeImage.COMPOSITE);
         return comp;

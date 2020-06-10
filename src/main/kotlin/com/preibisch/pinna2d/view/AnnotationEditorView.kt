@@ -52,6 +52,7 @@ class AnnotationEditorView : View("Annotations") {
             fieldset {
 
                 controller.tableview = tableview<AnnotationEntryModel> {
+
                     items = controller.items
 //                    mTableView = editModel
                     column("ID", AnnotationEntryModel::annotationId)
@@ -84,6 +85,7 @@ class AnnotationEditorView : View("Annotations") {
                     }
 //                sortOrder.add(xx)
                 }
+
             }
         }
     }
