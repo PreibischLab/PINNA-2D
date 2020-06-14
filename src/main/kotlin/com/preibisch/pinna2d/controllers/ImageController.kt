@@ -2,7 +2,6 @@ package com.preibisch.pinna2d.controllers
 
 import com.preibisch.pinna2d.tools.Imp
 import com.preibisch.pinna2d.tools.Log
-import com.preibisch.pinna2d.util.randomColor
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Point2D
 import javafx.scene.Node
@@ -24,26 +23,19 @@ class ImageController : Controller() {
     var mText = SimpleStringProperty()
     var imageView = ImageView()
     var currentCategory = 0;
-//    var image: Image
 
     init {
 
     }
 
-
-    fun start(input: String, mask: String, imageName: String){
+    fun start(input: String, mask: String, imageName: String) {
         imageView.image = Imp.init(input, mask).toImage()
     }
-
 
     fun addCircle(it: MouseEvent, root: Node) {
         val mousePt: Point2D = root.sceneToLocal(it.sceneX, it.sceneY)
         circle = Circle(mousePt.x, mousePt.y, circleRadius, Color.ORANGE)
         root.getChildList()!!.add(circle)
-    }
-
-    fun addRandomText() {
-        mText.set(randomColor())
     }
 
     fun positionCicle(it: MouseEvent, root: Node) {
@@ -61,19 +53,13 @@ class ImageController : Controller() {
     }
 
     fun clickOnImage(x: Double, y: Double) {
-//        val v : Float  = CV2.getValue(x.toInt(), y.toInt())
         val v = Imp.get().getValue(x.toInt(), y.toInt())
         if (v > 0) {
             annotationController.select(v)
             select(v)
         }
-//
-
-
-//        imageView.rep
         Log.info("x: $x y: $y - Val :$v")
     }
-
 
     fun save(file: File) {
         Imp.get().save(file)
@@ -81,16 +67,9 @@ class ImageController : Controller() {
 
     fun select(v: Int) {
         if (v > 0) {
-              Imp.get().set(v)
-            //        Imp.get().add(v, currentCategory)
-//        currentCategory += 1
-//        if(currentCategory>2)
-//            currentCategory = 0;
+            Imp.get().set(v)
             imageView.image = Imp.get().toImage()
-
         }
-
     }
-
 
 }

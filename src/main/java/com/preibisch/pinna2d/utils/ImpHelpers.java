@@ -6,7 +6,6 @@ import ij.ImagePlus;
 import ij.VirtualStack;
 import ij.io.FileInfo;
 import ij.io.FileSaver;
-import ij.io.Opener;
 import ij.io.TiffEncoder;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
@@ -14,9 +13,10 @@ import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.img.ImagePlusAdapter;
 import net.imglib2.img.Img;
+import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.img.cell.CellImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
@@ -120,39 +120,52 @@ public class ImpHelpers {
         System.out.println("Type: " + imp.getType());
     }
 
-    public static <T extends Type<T>> CompositeImage getComposite(File original, File mask) {
-        return getComposite(original, mask, 0);
+//    public static <T extends Type<T>> ImagePlus getComposite(ImagePlus original) {
+//        return getComposite(original, 0);
+//    }
+
+    // IMP Convert to float
+    // new ImagePlus("float" ,impMask.getProcessor().convertToFloatProcessor() );
+
+    //Code from Stephan
+//        for ( int i = 0; i < imp.getStackSize(); ++i )
+//        {  Color.GREEN
+//            imp.getStack().getProcessor( i + 1 ).setColor(Colors.getColor(ColorUtilsKt.randomColor(),Color.BLUE));
+//            imp.getStack().getProcessor( i + 1 ).setMinAndMax( 10, 100 );
+//        }
+//        impMask.setDisplayRange(0,300);
+
+    public static <T extends Type<T>> CompositeImage getComposite(ImagePlus imp, int extras) {
+        Img<UnsignedByteType> output = createBlackOutput(imp);
+        for (int i = 0; i < extras; i++)
+            imp.getStack().addSlice(ImageJFunctions.wrap(output.copy(), String.valueOf(i)).getProcessor());
+
+        imp.setDimensions(imp.getStackSize(), 1, 1);
+
+        CompositeImage comp = new CompositeImage(imp, CompositeImage.COMPOSITE);
+
+        return comp;
     }
 
-    public static <T extends Type<T>> CompositeImage getComposite(File original, File mask, int extras) {
-
-        final ImagePlus impOriginal = new Opener().openImage(original.getAbsolutePath());
-        final ImagePlus impMask = new Opener().openImage(mask.getAbsolutePath());
-        // IMP Convert to float
-       new ImagePlus("float" ,impMask.getProcessor().convertToFloatProcessor() );
-        printInfos(impOriginal);
-        printInfos(impMask);
-
-        impOriginal.getStack().addSlice(impMask.getProcessor());
-
-        if (extras > 0) {
-            Img<UnsignedByteType> input = ImagePlusAdapter.wrap(impMask);
-            Img<UnsignedByteType> output = input.factory().create(input);
-            for (int i = 0; i < extras; i++)
-                impOriginal.getStack().addSlice(ImageJFunctions.wrap(output.copy(), String.valueOf(i)).getProcessor());
-        }
-    impOriginal.setDimensions(impOriginal.getStackSize(), 1, 1);
-        //Code from Stephan
-//        for ( int i = 0; i < imp.getStackSize(); ++i ) 		{ 		imp.getStack().getProcessor( i + 1 ).setColor( Color.GREEN ); 		imp.getStack().getProcessor( i + 1 ).setMinAndMax( min, max ); 		}
-
-        CompositeImage comp = new CompositeImage(impOriginal, CompositeImage.COMPOSITE);
-        return comp;
+    public static Img<UnsignedByteType> createBlackOutput(ImagePlus imp) {
+        final ImgFactory<UnsignedByteType> imgFactory = new CellImgFactory<>(new UnsignedByteType(), 5);
+        int[] dims = imp.getDimensions();
+        final Img<UnsignedByteType> img = imgFactory.create(dims[0], dims[1]);
+        return img;
     }
 
 
     public static Image toImage(ImagePlus imp) {
         Image fxImage = SwingFXUtils.toFXImage(imp.getBufferedImage(), null);
         return fxImage;
+    }
+
+    public static int getValue(Img<UnsignedByteType> img, int x, int y) {
+        RandomAccess<UnsignedByteType> cursor = img.randomAccess();
+        cursor.setPosition(x, 0);
+        cursor.setPosition(y, 1);
+        UnsignedByteType val = cursor.get();
+        return val.getInteger();
     }
 
     public static int getValue(Img<UnsignedByteType> img, int x, int y, int channel) {
@@ -164,7 +177,7 @@ public class ImpHelpers {
         return val.getInteger();
     }
 
-    public static void add(IntervalView<UnsignedByteType> masks, IntervalView<UnsignedByteType> result, int value, int category) {
+    public static void add(Img<UnsignedByteType> masks, IntervalView<UnsignedByteType> result, int value, int category) {
         Cursor<UnsignedByteType> cursorInput = masks.cursor();
 
         RandomAccess<UnsignedByteType> randomAccess = result.randomAccess();
@@ -179,7 +192,7 @@ public class ImpHelpers {
     }
 
 
-    public static void setOnly(IntervalView<UnsignedByteType> masks, IntervalView<UnsignedByteType> result, int value, int setValue) {
+    public static void setOnly(Img<UnsignedByteType> masks, IntervalView<UnsignedByteType> result, int value, int setValue) {
         Cursor<UnsignedByteType> cursorInput = masks.cursor();
         RandomAccess<UnsignedByteType> randomAccess = result.randomAccess();
         while (cursorInput.hasNext()) {
@@ -220,7 +233,7 @@ public class ImpHelpers {
     public static void save(IntervalView<UnsignedByteType> view, File file) {
         ImagePlus imp = ImageJFunctions.wrap(view, "Categories");
         imp.show();
-        saveTiffStack(imp,file);
+        saveTiffStack(imp, file);
 
     }
 
