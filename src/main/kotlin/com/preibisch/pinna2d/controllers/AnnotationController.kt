@@ -55,7 +55,7 @@ class AnnotationController : Controller() {
 //        }
     }
 
-    fun add(newEntryDate: LocalDate, newImageName: String, newAnnotationId: Int, newAnnotationVal: Int): AnnotationEntry {
+    fun add(newEntryDate: LocalDate, newImageName: String, newAnnotationId: Float, newAnnotationVal: Int): AnnotationEntry {
         val newEntry = execute {
             AnnotationEntryTbl.insert {
                 it[entryDate] = newEntryDate.toDate()
@@ -78,7 +78,7 @@ class AnnotationController : Controller() {
             }) {
                 it[entryDate] = updatedItem.entryDate.value.toDate()
                 it[imageName] = updatedItem.imageName.value
-                it[annotationId] = updatedItem.annotationId.value.toInt()
+                it[annotationId] = updatedItem.annotationId.value.toFloat()
                 it[annotationVal] = updatedItem.annotationVal.value.toInt()
             }
         }
@@ -97,17 +97,17 @@ class AnnotationController : Controller() {
 
     fun newEntry(img: String, min: Int, max: Int) {
         for ( i in min..max){
-            add(LocalDate.now(),img,i,-1)
+            add(LocalDate.now(),img,i.toFloat(),-1)
 
         }
     }
 
-    fun start(imageName: String, min: Int, max: Int) {
+    fun start(imageName: String, min: Float, max: Float) {
 //        items.removeAll()
 //        items = FXCollections.observableArrayList();
         val exists = checkExist(imageName)
         if(exists == false)
-            newEntry(imageName,min,max)
+            newEntry(imageName,min.toInt(),max.toInt())
         else {
 
             val newItems = execute {
@@ -134,7 +134,7 @@ class AnnotationController : Controller() {
     }
 
 
-    fun select(v: Int) {
+    fun select(v: Float) {
         var position = 0;
         loop@ for (it in tableview.items) {
             if (it.annotationId.value == v)

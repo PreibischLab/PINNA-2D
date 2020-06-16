@@ -4,13 +4,12 @@ import com.preibisch.pinna2d.util.DEFAULTKt;
 import com.preibisch.pinna2d.utils.ImpHelpers;
 import ij.CompositeImage;
 import ij.ImagePlus;
-import ij.io.Opener;
 import ij.plugin.LutLoader;
 import ij.process.LUT;
 import javafx.scene.image.Image;
 import net.imglib2.img.ImagePlusAdapter;
 import net.imglib2.img.Img;
-import net.imglib2.type.numeric.integer.UnsignedByteType;
+import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 import org.jetbrains.annotations.NotNull;
@@ -29,10 +28,10 @@ public class Imp extends ImpHelpers {
     private final int clickViewChannel;
     //    private final int maskChannel;
     private final int categoryChannel;
-    private UnsignedByteType min;
-    private UnsignedByteType max;
+    private FloatType min;
+    private FloatType max;
     private CompositeImage gui_image;
-    private Img<UnsignedByteType> img, mask;
+    private Img<FloatType> img, mask;
 
 
     public static Imp get() throws Exception {
@@ -52,16 +51,14 @@ public class Imp extends ImpHelpers {
 
     public Image toImage() {
         gui_image.updateImage();
-        gui_image.setChannelLut(lut, gui_image.getNChannels() - 1);
+        int position = categoryChannel;
+        Log.info("Position : "+position);
+        gui_image.setChannelLut(lut, position);
         return ImpHelpers.toImage(gui_image);
     }
 
     private Imp(String imagePath, String maskPath, int mode) throws IOException {
         lut = LutLoader.openLut(DEFAULTKt.getLUT_PATH());
-        File f1 = new File(imagePath);
-        File f2 = new File(maskPath);
-        if (!(f1.exists() && f2.exists()))
-            throw new IOException("File not found");
 
         switch (mode) {
             case WITH_CLICK:
@@ -74,8 +71,8 @@ public class Imp extends ImpHelpers {
                 throw new IOException("Invalid mode :" + mode);
         }
         this.mode = mode;
-        final ImagePlus imp = new Opener().openImage(f1.getAbsolutePath());
-        ImagePlus impMask = new Opener().openImage(f2.getAbsolutePath());
+        final ImagePlus imp = open(new File(imagePath));
+        ImagePlus impMask = open(new File(maskPath));
         Log.info(imp.getFileInfo().toString());
         Log.info(impMask.getFileInfo().toString());
         printInfos(impMask);
@@ -92,38 +89,38 @@ public class Imp extends ImpHelpers {
 
         this.min = img.firstElement().createVariable();
         this.max = img.firstElement().createVariable();
-        computeMinMax(img, min, max);
+        computeMinMax(mask, min, max);
         Log.info("Min : " + getMin() + "  Max: " + getMax());
         gui_image.draw();
     }
 
-    public int getValue(int x, int y) {
+    public float getValue(int x, int y) {
         return getValue(mask, x, y);
     }
 
-    public void set(int value) {
+    public void set(float value) {
         int dims = img.numDimensions() - 1;
-        IntervalView<UnsignedByteType> results = Views.hyperSlice(img, dims, clickViewChannel);
+        IntervalView<FloatType> results = Views.hyperSlice(img, dims, clickViewChannel);
         setOnly(mask, results, value, CLICK_VALUE);
     }
 
-    public void add(int value, int category) {
+    public void add(float value, int category) {
         int dims = img.numDimensions() - 1;
-        IntervalView<UnsignedByteType> results = Views.hyperSlice(img, dims, categoryChannel);
+        IntervalView<FloatType> results = Views.hyperSlice(img, dims, categoryChannel);
         add(mask, results, value, category);
     }
 
-    public int getMin() {
-        return min.getInteger();
+    public float getMin() {
+        return min.get();
     }
 
-    public int getMax() {
-        return max.getInteger();
+    public float getMax() {
+        return max.get();
     }
 
     public void save(@NotNull File file) {
         int dims = img.numDimensions() - 1;
-        IntervalView<UnsignedByteType> view = Views.hyperSlice(img, dims, categoryChannel);
+        IntervalView<FloatType> view = Views.hyperSlice(img, dims, categoryChannel);
         save(view, file);
     }
 }

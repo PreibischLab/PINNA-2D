@@ -4,10 +4,7 @@ import com.preibisch.pinna2d.model.AnnotationEntryTbl.autoIncrement
 import com.preibisch.pinna2d.model.AnnotationEntryTbl.primaryKey
 import com.preibisch.pinna2d.util.toJavaLocalDate
 import javafx.beans.binding.Bindings
-import javafx.beans.property.SimpleDoubleProperty
-import javafx.beans.property.SimpleIntegerProperty
-import javafx.beans.property.SimpleObjectProperty
-import javafx.beans.property.SimpleStringProperty
+import javafx.beans.property.*
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
 import tornadofx.*
@@ -17,7 +14,7 @@ fun ResultRow.toAnnotationEntry() = AnnotationEntry(
         this[AnnotationEntryTbl.id],
         this[AnnotationEntryTbl.entryDate].toJavaLocalDate(),
         this[AnnotationEntryTbl.imageName],
-        this[AnnotationEntryTbl.annotationId].toInt(),
+        this[AnnotationEntryTbl.annotationId].toFloat(),
         this[AnnotationEntryTbl.annotationVal].toInt()
 
 )
@@ -27,11 +24,11 @@ object AnnotationEntryTbl : Table() {
     val id = integer("id").autoIncrement().primaryKey()
     val entryDate = date("entry_date")
     val imageName = varchar("image_name", length = 100)
-    val annotationId = integer("annotation_id")
+    val annotationId = float("annotation_id")
     val annotationVal = integer("annotation_val")
 }
 
-class AnnotationEntry(id: Int, entryDate: LocalDate, imageName: String, annotationId: Int, annotationVal : Int) {
+class AnnotationEntry(id: Int, entryDate: LocalDate, imageName: String, annotationId: Float, annotationVal : Int) {
     val idProperty = SimpleIntegerProperty(id)
     var id by idProperty
 
@@ -41,7 +38,7 @@ class AnnotationEntry(id: Int, entryDate: LocalDate, imageName: String, annotati
     val imageNameProperty = SimpleStringProperty(imageName)
     var imageName by imageNameProperty
 
-    val annotationIdProperty = SimpleIntegerProperty(annotationId)
+    val annotationIdProperty = SimpleFloatProperty(annotationId)
     var annotationId by annotationIdProperty
 
     val annotationValProperty = SimpleIntegerProperty(annotationVal)

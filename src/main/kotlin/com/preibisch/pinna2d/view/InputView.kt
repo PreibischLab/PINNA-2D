@@ -74,6 +74,7 @@ class InputView : View("Select Input") {
     private fun openChooser(): String {
         var chooser = FileChooser()
         chooser.extensionFilters.add(FileChooser.ExtensionFilter("TIFF file ", "*.tiff"))
+        chooser.extensionFilters.add(FileChooser.ExtensionFilter("TIF file ", "*.tif"))
         chooser.extensionFilters.add(FileChooser.ExtensionFilter("PNG file ", "*.png"))
         val file = chooser.showOpenDialog(null)
         return file?.toString() ?: ""

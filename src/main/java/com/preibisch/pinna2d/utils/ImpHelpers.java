@@ -6,6 +6,7 @@ import ij.ImagePlus;
 import ij.VirtualStack;
 import ij.io.FileInfo;
 import ij.io.FileSaver;
+import ij.io.Opener;
 import ij.io.TiffEncoder;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
@@ -18,7 +19,6 @@ import net.imglib2.img.ImgFactory;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.cell.CellImgFactory;
 import net.imglib2.img.display.imagej.ImageJFunctions;
-import net.imglib2.type.Type;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.IntervalView;
@@ -28,6 +28,8 @@ import java.io.*;
 import java.util.Iterator;
 
 public class ImpHelpers {
+
+    private static final int FLOAT_TYPE = 2;
 
     public static void copy(final RandomAccessibleInterval<FloatType> source,
                             final RandomAccessibleInterval<FloatType> target) {
@@ -135,8 +137,8 @@ public class ImpHelpers {
 //        }
 //        impMask.setDisplayRange(0,300);
 
-    public static <T extends Type<T>> CompositeImage getComposite(ImagePlus imp, int extras) {
-        Img<UnsignedByteType> output = createBlackOutput(imp);
+    public static CompositeImage getComposite(ImagePlus imp, int extras) {
+        Img<FloatType> output = createBlackOutput(imp);
         for (int i = 0; i < extras; i++)
             imp.getStack().addSlice(ImageJFunctions.wrap(output.copy(), String.valueOf(i)).getProcessor());
 
@@ -147,10 +149,10 @@ public class ImpHelpers {
         return comp;
     }
 
-    public static Img<UnsignedByteType> createBlackOutput(ImagePlus imp) {
-        final ImgFactory<UnsignedByteType> imgFactory = new CellImgFactory<>(new UnsignedByteType(), 5);
+    public static Img<FloatType> createBlackOutput(ImagePlus imp) {
+        final ImgFactory<FloatType> imgFactory = new CellImgFactory<>(new FloatType(), 5);
         int[] dims = imp.getDimensions();
-        final Img<UnsignedByteType> img = imgFactory.create(dims[0], dims[1]);
+        final Img<FloatType> img = imgFactory.create(dims[0], dims[1]);
         return img;
     }
 
@@ -160,12 +162,12 @@ public class ImpHelpers {
         return fxImage;
     }
 
-    public static int getValue(Img<UnsignedByteType> img, int x, int y) {
-        RandomAccess<UnsignedByteType> cursor = img.randomAccess();
+    public static float getValue(Img<FloatType> img, int x, int y) {
+        RandomAccess<FloatType> cursor = img.randomAccess();
         cursor.setPosition(x, 0);
         cursor.setPosition(y, 1);
-        UnsignedByteType val = cursor.get();
-        return val.getInteger();
+        FloatType val = cursor.get();
+        return val.get();
     }
 
     public static int getValue(Img<UnsignedByteType> img, int x, int y, int channel) {
@@ -177,14 +179,14 @@ public class ImpHelpers {
         return val.getInteger();
     }
 
-    public static void add(Img<UnsignedByteType> masks, IntervalView<UnsignedByteType> result, int value, int category) {
-        Cursor<UnsignedByteType> cursorInput = masks.cursor();
+    public static void add(Img<FloatType> masks, IntervalView<FloatType> result, float value, int category) {
+        Cursor<FloatType> cursorInput = masks.cursor();
 
-        RandomAccess<UnsignedByteType> randomAccess = result.randomAccess();
+        RandomAccess<FloatType> randomAccess = result.randomAccess();
 
         while (cursorInput.hasNext()) {
             cursorInput.fwd();
-            if (cursorInput.get().getInteger() == value) {
+            if (cursorInput.get().get() == value) {
                 randomAccess.setPosition(cursorInput);
                 randomAccess.get().set(category);
             }
@@ -192,20 +194,20 @@ public class ImpHelpers {
     }
 
 
-    public static void setOnly(Img<UnsignedByteType> masks, IntervalView<UnsignedByteType> result, int value, int setValue) {
-        Cursor<UnsignedByteType> cursorInput = masks.cursor();
-        RandomAccess<UnsignedByteType> randomAccess = result.randomAccess();
+    public static void setOnly(Img<FloatType> masks, IntervalView<FloatType> result, float value, int setValue) {
+        Cursor<FloatType> cursorInput = masks.cursor();
+        RandomAccess<FloatType> randomAccess = result.randomAccess();
         while (cursorInput.hasNext()) {
             cursorInput.fwd();
             randomAccess.setPosition(cursorInput);
-            if (cursorInput.get().getInteger() == value)
+            if (cursorInput.get().get() == value)
                 randomAccess.get().set(setValue);
             else
                 randomAccess.get().set(0);
         }
     }
 
-    public static <T extends Comparable<T> & Type<T>> void computeMinMax(
+    public static <T extends FloatType> void computeMinMax(
             final Iterable<T> input, final T min, final T max) {
         // create a cursor for the image (the order does not matter)
         final Iterator<T> iterator = input.iterator();
@@ -230,11 +232,10 @@ public class ImpHelpers {
 
     }
 
-    public static void save(IntervalView<UnsignedByteType> view, File file) {
+    public static void save(IntervalView<FloatType> view, File file) {
         ImagePlus imp = ImageJFunctions.wrap(view, "Categories");
         imp.show();
         saveTiffStack(imp, file);
-
     }
 
     /*
@@ -267,5 +268,15 @@ public class ImpHelpers {
                 }
         }
         return true;
+    }
+
+    protected static ImagePlus open(File f) throws IOException {
+        if(!f.exists())
+            throw new IOException(String.format("%s File not found",f.getAbsolutePath()));
+        ImagePlus imp = new Opener().openImage(f.getAbsolutePath());
+        if (imp.getType()==FLOAT_TYPE)
+            return imp;
+        else
+            return new ImagePlus("float", imp.getProcessor().convertToFloatProcessor());
     }
 }

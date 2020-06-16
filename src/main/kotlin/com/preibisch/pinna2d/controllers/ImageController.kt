@@ -65,7 +65,7 @@ class ImageController : Controller() {
         Imp.get().save(file)
     }
 
-    fun select(v: Int) {
+    fun select(v: Float) {
         if (v > 0) {
             Imp.get().set(v)
             imageView.image = Imp.get().toImage()

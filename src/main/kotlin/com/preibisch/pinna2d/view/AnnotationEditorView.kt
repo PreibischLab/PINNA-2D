@@ -77,7 +77,7 @@ class AnnotationEditorView : View("Annotations") {
                             setSelectedCategory(it.annotationVal.value.toInt())
                             enableCategoryButtons()
                             if (it.annotationId.value != null) {
-                                imageController.select(it.annotationId.value.toInt())
+                                imageController.select(it.annotationId.value.toFloat())
 
                             }
 
@@ -137,7 +137,7 @@ class AnnotationEditorView : View("Annotations") {
         }
         controller.update(model)
         controller.tableview.selectionModel.selectNext()
-        Imp.get().add(model.annotationId.value.toInt(),model.annotationVal.value.toInt())
+        Imp.get().add(model.annotationId.value.toFloat(),model.annotationVal.value.toInt())
 //        controller.items.up
     }
 }
