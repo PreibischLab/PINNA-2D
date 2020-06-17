@@ -270,13 +270,48 @@ public class ImpHelpers {
         return true;
     }
 
-    protected static ImagePlus open(File f) throws IOException {
+    protected static ImagePlus openImp(File f) throws IOException {
         if(!f.exists())
             throw new IOException(String.format("%s File not found",f.getAbsolutePath()));
         ImagePlus imp = new Opener().openImage(f.getAbsolutePath());
         if (imp.getType()==FLOAT_TYPE)
             return imp;
         else
-            return new ImagePlus("float", imp.getProcessor().convertToFloatProcessor());
+            return convertImpToFloat(imp);
     }
+
+    public static ImagePlus convertImpToFloat(ImagePlus imp) {
+        if(imp.getNDimensions()==2)
+        return new ImagePlus("float", imp.getProcessor().convertToFloatProcessor());
+        else {
+            Log.info(String.format("File have %d dimensions to be converted to Float",imp.getNDimensions()));
+            imp.setStack(imp.getStack().convertToFloat());
+            return  imp;
+        }
+    }
+
+//    private static ImagePlus convertMultiDimsImpToFloat(ImagePlus imp) {
+//
+//        Log.info(String.format("Channels: %d - StackSize: %d",imp.getNChannels(),imp.getStackSize()));
+//        Log.info(String.format("Imp: "+Utils.toString(imp.getDimensions())));
+//        int nbChannels = imp.getNChannels();
+//        Log.info("Stack size: "+  imp.getStack().size());
+//        for ( int i = 1; i < imp.getStackSize(); ++i )
+//            imp.setStack(imp.getStack().convertToFloat());
+//
+//      return imp;
+////        ImagePlus result = new ImagePlus("float",  imp.getProcessor().convertToFloatProcessor());
+////                for ( int i = 1; i < imp.getStackSize(); ++i )
+////        {
+////            Log.info( Utils.toString(result.getDimensions()));
+//////            ImagePlus tmp = new ImagePlus("float",  imp.getStack().getProcessor( i + 1 ).convertToFloatProcessor());
+////            result.getStack().addSlice( imp.getStack().getProcessor( i + 1 ).convertToFloatProcessor());
+////        }
+////        Log.info( Utils.toString(result.getDimensions()));
+////        Log.info("Stack size: "+ String.valueOf(result.getStackSize()));
+////        result.setDimensions(nchannels, 1, 1);
+////
+////        Log.info( Utils.toString(result.getDimensions()));
+////       return result;
+//    }
 }

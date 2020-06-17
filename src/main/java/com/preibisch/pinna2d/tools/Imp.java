@@ -2,6 +2,7 @@ package com.preibisch.pinna2d.tools;
 
 import com.preibisch.pinna2d.util.DEFAULTKt;
 import com.preibisch.pinna2d.utils.ImpHelpers;
+import com.preibisch.pinna2d.utils.Utils;
 import ij.CompositeImage;
 import ij.ImagePlus;
 import ij.plugin.LutLoader;
@@ -53,7 +54,8 @@ public class Imp extends ImpHelpers {
         gui_image.updateImage();
         int position = categoryChannel;
         Log.info("Position : "+position);
-        gui_image.setChannelLut(lut, position);
+        Log.info( Utils.toString(gui_image.getDimensions()));
+//        gui_image.setChannelLut(lut, position);
         return ImpHelpers.toImage(gui_image);
     }
 
@@ -71,8 +73,8 @@ public class Imp extends ImpHelpers {
                 throw new IOException("Invalid mode :" + mode);
         }
         this.mode = mode;
-        final ImagePlus imp = open(new File(imagePath));
-        ImagePlus impMask = open(new File(maskPath));
+        final ImagePlus imp = openImp(new File(imagePath));
+        ImagePlus impMask = openImp(new File(maskPath));
         Log.info(imp.getFileInfo().toString());
         Log.info(impMask.getFileInfo().toString());
         printInfos(impMask);
