@@ -99,7 +99,7 @@ public class ImpHelpers {
     public static <T> void printDims(RandomAccessibleInterval<T> img) {
         long[] dims = getDims(img);
         String string = toString(dims);
-        System.out.println("Dims: " + img.numDimensions() + "-" + string);
+        Log.info("Dims: " + img.numDimensions() + "-" + string);
 
     }
 
@@ -110,16 +110,17 @@ public class ImpHelpers {
         return ImageJFunctions.wrap(imgAll, "");
     }
 
-    public static void printDims(ImagePlus imp) {
-        Img<FloatType> img = ImageJFunctions.wrap(imp);
-        printDims(img);
-    }
+//    public static void printDims(ImagePlus imp) {
+//        Img<FloatType> img = ImageJFunctions.wrap(imp);
+//        printDims(img);
+//    }
 
     public static void printInfos(ImagePlus imp) {
-        System.out.println("Stack: " + imp.getStack().size());
-        System.out.println("Channel: " + imp.getChannel());
-        printDims(imp);
-        System.out.println("Type: " + imp.getType());
+        Log.info(imp.getFileInfo().toString());
+        Log.info("Stack: " + imp.getStack().size());
+        Log.info("Channel: " + imp.getChannel());
+        Log.info("Dims: "+Utils.toString(imp.getDimensions()));
+        Log.info("Type: " + imp.getType());
     }
 
 //    public static <T extends Type<T>> ImagePlus getComposite(ImagePlus original) {
@@ -148,6 +149,8 @@ public class ImpHelpers {
 
         return comp;
     }
+
+//    public static ImagePlus(conca)
 
     public static Img<FloatType> createBlackOutput(ImagePlus imp) {
         final ImgFactory<FloatType> imgFactory = new CellImgFactory<>(new FloatType(), 5);
@@ -274,6 +277,7 @@ public class ImpHelpers {
         if(!f.exists())
             throw new IOException(String.format("%s File not found",f.getAbsolutePath()));
         ImagePlus imp = new Opener().openImage(f.getAbsolutePath());
+        printInfos(imp);
         if (imp.getType()==FLOAT_TYPE)
             return imp;
         else

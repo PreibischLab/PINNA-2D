@@ -5,22 +5,23 @@ import com.preibisch.pinna2d.model.AnnotationEntry
 import com.preibisch.pinna2d.model.AnnotationEntryModel
 import com.preibisch.pinna2d.model.AnnotationEntryTbl
 import com.preibisch.pinna2d.model.toAnnotationEntry
+import com.preibisch.pinna2d.tools.Imp
 import com.preibisch.pinna2d.tools.Log
 import com.preibisch.pinna2d.util.execute
 import com.preibisch.pinna2d.util.toDate
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
-import javafx.scene.chart.PieChart
 import javafx.scene.control.TableView
 import org.jetbrains.exposed.sql.*
 import tornadofx.*
-import tornadofx.select
 import java.time.LocalDate
-import java.util.*
 
 class AnnotationController : Controller() {
+
+    private val imageController: ImageController by inject()
     var annotationsModel = AnnotationEntryModel()
     var tableview: TableView<AnnotationEntryModel> by singleAssign()
+
     //    get All Items
     private val listOfItems: ObservableList<AnnotationEntryModel> = execute {
 //        .orderBy(AnnotationEntryTbl.annotationVal)
@@ -31,7 +32,7 @@ class AnnotationController : Controller() {
         }.observable()
     }
 
-    var items : ObservableList<AnnotationEntryModel> by singleAssign()
+    var items: ObservableList<AnnotationEntryModel> by singleAssign()
 //    var pieItemsData = FXCollections.observableArrayList<PieChart.Data>()
 
     init {
@@ -65,10 +66,10 @@ class AnnotationController : Controller() {
             }
         }
         items.add(AnnotationEntryModel().apply {
-            item = AnnotationEntry(newEntry[AnnotationEntryTbl.id], newEntryDate, newImageName,newAnnotationId,newAnnotationVal)
+            item = AnnotationEntry(newEntry[AnnotationEntryTbl.id], newEntryDate, newImageName, newAnnotationId, newAnnotationVal)
         })
 //        pieItemsData.add(PieChart.Data(newItem,newPrice))
-        return AnnotationEntry(newEntry[AnnotationEntryTbl.id], newEntryDate, newImageName,newAnnotationId,newAnnotationVal)
+        return AnnotationEntry(newEntry[AnnotationEntryTbl.id], newEntryDate, newImageName, newAnnotationId, newAnnotationVal)
     }
 
     fun update(updatedItem: AnnotationEntryModel): Int {
@@ -96,18 +97,19 @@ class AnnotationController : Controller() {
     }
 
     fun newEntry(img: String, min: Int, max: Int) {
-        for ( i in min..max){
-            add(LocalDate.now(),img,i.toFloat(),-1)
+        for (i in min..max) {
+            add(LocalDate.now(), img, i.toFloat(), -1)
 
         }
     }
 
     fun start(imageName: String, min: Float, max: Float) {
 //        items.removeAll()
+        items.clear()
 //        items = FXCollections.observableArrayList();
         val exists = checkExist(imageName)
-        if(exists == false)
-            newEntry(imageName,min.toInt(),max.toInt())
+        if (exists == false)
+            newEntry(imageName, min.toInt(), max.toInt())
         else {
 
             val newItems = execute {
@@ -118,17 +120,27 @@ class AnnotationController : Controller() {
                     }
                 }
             }
+
             items.addAll(newItems.observable())
+            addAll(newItems)
         }
+    }
+
+    private fun addAll(items: List<AnnotationEntryModel>) {
+        for (it in items) {
+            if (it.annotationVal.value.toInt() > 0)
+                Imp.get().add(it.annotationId.value.toFloat(), it.annotationVal.value.toInt())
+        }
+        imageController.updateImage()
     }
 
 
     private fun checkExist(img: String): Boolean {
-        for(item in listOfItems){
-           if(item.imageName.value == img) {
-               Log.info("Image exist in database")
-               return true
-           }
+        for (item in listOfItems) {
+            if (item.imageName.value == img) {
+                Log.info("Image exist in database")
+                return true
+            }
         }
         return false;
     }

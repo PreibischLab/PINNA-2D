@@ -52,10 +52,10 @@ public class Imp extends ImpHelpers {
 
     public Image toImage() {
         gui_image.updateImage();
-        int position = categoryChannel;
+        int position = categoryChannel+1;
         Log.info("Position : "+position);
         Log.info( Utils.toString(gui_image.getDimensions()));
-//        gui_image.setChannelLut(lut, position);
+        gui_image.setChannelLut(lut, position);
         return ImpHelpers.toImage(gui_image);
     }
 
@@ -74,17 +74,16 @@ public class Imp extends ImpHelpers {
         }
         this.mode = mode;
         final ImagePlus imp = openImp(new File(imagePath));
-        ImagePlus impMask = openImp(new File(maskPath));
-        Log.info(imp.getFileInfo().toString());
-        Log.info(impMask.getFileInfo().toString());
-        printInfos(impMask);
         printInfos(imp);
+        ImagePlus impMask = openImp(new File(maskPath));
+        printInfos(impMask);
         mask = ImagePlusAdapter.wrap(impMask);
 
         int nChannels = imp.getNChannels();
         this.categoryChannel = nChannels++;
         this.clickViewChannel = nChannels++;
         Log.info("Channels: " + nChannels);
+//        imp.getStack().addSlice(impMask.getProcessor());
         gui_image = ImpHelpers.getComposite(imp, mode);
 
         img = ImagePlusAdapter.wrap(gui_image);
@@ -109,7 +108,8 @@ public class Imp extends ImpHelpers {
     public void add(float value, int category) {
         int dims = img.numDimensions() - 1;
         IntervalView<FloatType> results = Views.hyperSlice(img, dims, categoryChannel);
-        add(mask, results, value, category);
+        Log.info(String.format("Set category %d to instance %.2f",category,value));
+        add(mask, results, value, category+2);
     }
 
     public float getMin() {

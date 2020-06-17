@@ -1,5 +1,6 @@
 package com.preibisch.pinna2d.controllers
 
+import com.preibisch.pinna2d.model.AnnotationEntryModel
 import com.preibisch.pinna2d.tools.Imp
 import com.preibisch.pinna2d.tools.Log
 import javafx.beans.property.SimpleStringProperty
@@ -68,8 +69,12 @@ class ImageController : Controller() {
     fun select(v: Float) {
         if (v > 0) {
             Imp.get().set(v)
-            imageView.image = Imp.get().toImage()
+            updateImage()
         }
+    }
+
+    fun updateImage() {
+        imageView.image = Imp.get().toImage()
     }
 
 }
