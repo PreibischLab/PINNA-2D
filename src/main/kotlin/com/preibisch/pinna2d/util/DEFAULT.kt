@@ -9,3 +9,6 @@ val MASK2_PATH = MainAnnotationView::class.java.getResource("/mask2.tif").path
 val LUT_PATH = MainAnnotationView::class.java.getResource("/glasbey_inverted.lut").path
 
 val CATEGORIES = listOf(0, 1, 2, 3)
+
+val INPUT_FOLDER = "/Users/Marwan/Desktop/Irimia Project/Data/raw_Tiff"
+val MASKS_FOLDER = "/Users/Marwan/Desktop/Irimia Project/Data/Mask/masks"

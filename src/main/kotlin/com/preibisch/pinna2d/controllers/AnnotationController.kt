@@ -36,24 +36,7 @@ class AnnotationController : Controller() {
 //    var pieItemsData = FXCollections.observableArrayList<PieChart.Data>()
 
     init {
-//        listOf<AnnotationEntryModel>().observable()
         items = FXCollections.observableArrayList();
-
-//        items = listOfItems
-//        items
-        //test
-//        add(LocalDate.now(),"test1",1,1)
-//        add(LocalDate.now(),"test1",2,3)
-//        add(LocalDate.now(),"test1",3,2)
-//        add(LocalDate.now(),"test1",4,1)
-
-//        listOfItems.forEach{
-//            print("Item :: ${it.itemName.value}")
-//        }
-
-//        items.forEach {
-//            pieItemsData.add(PieChart.Data(it.itemName.value,it.itemPrice.value.toDouble()))
-//        }
     }
 
     fun add(newEntryDate: LocalDate, newImageName: String, newAnnotationId: Float, newAnnotationVal: Int): AnnotationEntry {
