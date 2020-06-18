@@ -23,6 +23,12 @@ class FileAnalyzeData(name: String, nbMasks: Int, nbClassifiedCells: Int, nbTota
     val nbTotalCellsProperty = SimpleIntegerProperty(nbTotalCells)
     var totalCells by nbTotalCellsProperty
 
+    var status : Int
+
+    init {
+        status = 0
+    }
+
 
 //    override fun toString(): String = "$voltage (time=$time)"
 }

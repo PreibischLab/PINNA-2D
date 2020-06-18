@@ -4,31 +4,29 @@ import com.preibisch.pinna2d.app.Styles
 import com.preibisch.pinna2d.controllers.FilesAnalyzeManager
 import com.preibisch.pinna2d.model.FileAnalyzeData
 import com.preibisch.pinna2d.util.INPUT_FOLDER
-import com.preibisch.pinna2d.util.INPUT_PATH
 import com.preibisch.pinna2d.util.MASKS_FOLDER
-import com.preibisch.pinna2d.util.MASK_PATH
+import com.preibisch.pinna2d.util.getFileStatusColor
+import com.preibisch.pinna2d.util.getStatus
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Insets
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
+import javafx.scene.layout.Priority
+import javafx.scene.paint.Color
+import javafx.scene.shape.Circle
 import tornadofx.*
 
-class FileSelectionView : View("List Select App") {
+class FileSelectionView : View("Select Inputs") {
     private val controller: FilesAnalyzeManager by inject()
     var input = SimpleStringProperty(INPUT_FOLDER)
     var mask = SimpleStringProperty(MASKS_FOLDER)
 
     override val root = form {
-//            setPrefSize(600.0,170.0)
             paddingAll = 10.0
-
             fieldset {
                 spacing = 20.0
                 field("Input Folder") {
-                    textfield(input) {
-                        addClass(Styles.fieldStyle)
-                        isEditable = false
-                    }
+                    textfield(input)
                     button("Select") {
                         setOnAction {
 //                            input.value  = openChooser()
@@ -37,10 +35,7 @@ class FileSelectionView : View("List Select App") {
                     }
                 }
                 field("Mask Folder") {
-                    textfield(mask) {
-                        addClass(Styles.fieldStyle)
-                        isEditable = false
-                    }
+                    textfield(mask)
                     button("Select") {
                         setOnAction {
 //                            mask.value  = openChooser()
@@ -60,56 +55,31 @@ class FileSelectionView : View("List Select App") {
 
             }
 
-        listview(controller.files) {
+        tableview(controller.files) {
+            columnResizePolicy = SmartResize.POLICY
+//            columnResizePolicy = CONSTRAINED_RESIZE_POLICY
+            vgrow = Priority.ALWAYS
             bindSelected(controller.selectedFile)
-            cellFormat {
-                text = "${it.fileName} masks:${it.nbMasks}"  // the toString() doesn't have units
+            column("Status",FileAnalyzeData::status).cellFormat {
+                val circle = Circle(10.0)
+                circle.stroke = Color.BLACK
+                circle.strokeWidth = 1.0
+                circle.fill = c(getFileStatusColor(item.toInt()))
+                graphic = circle
+                text = getStatus(it)
             }
-        }
-
-        hbox {
-
-            button("Add") {
-//                enableWhen { newVoltage.isNotEmpty.and(newTime.isNotEmpty) }
-//                action {
-////                    selectedReading.add(SensorData(newVoltage.value.toDouble(), newTime.value.toLong()))
-//                }
-            }
-            button("Clear") {
-//                enableWhen { newVoltage.isNotEmpty.or(newTime.isNotEmpty) }
-//                action {
-//                    newVoltage.value = ""
-//                    newTime.value = ""
-//                }
-            }
-            separator(Orientation.VERTICAL)
-            button("Delete") {
-                enableWhen { controller.selectedFile.isNotNull }
-                action {
-//                    val obj = selectedReading.value
-//
-//                    sensorReadings.remove(obj)
-//
-//                    alert(Alert.AlertType.INFORMATION
-//                            "Deleted",
-//                            "Deleted ${obj.voltage} at t=${obj.time}")
-                }
-            }
-            alignment = Pos.CENTER_LEFT
-            padding = Insets(10.0)
-            spacing = 4.0
+            column("File Name",FileAnalyzeData::fileName)
+//            column("Masks Found",FileAnalyzeData::nbMasks)
+            column("Cells",FileAnalyzeData::totalCells)
         }
         button("Next") {
             prefWidth = 600.0
             alignment = Pos.CENTER
+            enableWhen {
+                controller.selectedFile.isNotNull
+            }
             setOnAction {
-                when {
-//                            input.value == "" ->  Alert(Alert.AlertType.ERROR,"Invalid input").show()
-//
-//                            mask.value == "" -> Alert(Alert.AlertType.ERROR,"Invalid mask").show()
-//                            else -> start(input.value,mask.value)
 
-                }
             }
         }
     }

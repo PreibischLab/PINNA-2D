@@ -22,7 +22,20 @@ class FilesAnalyzeManager : Controller() {
         val inputFiles = getFiles(File(input), ".tif")
         val maskFiles = getFiles(File(mask), ".tif")
         val assembledData: Map<File, List<File>> = assembleInputWithMasks(inputFiles, maskFiles)
-        assembledData.forEach { (t, u) -> files.add(FileAnalyzeData(t.name, u.size, 0, 0)) }
+        assembledData.forEach { (t, u) -> files.add(FileAnalyzeData(t.name, u.size, 0, getMaxCells(u))) }
+    }
+
+    private fun getMaxCells(maskFiles: List<File>): Int {
+        var max = 0
+        maskFiles.forEach {
+            val tmp = getNbCells(it)
+            if(tmp>max ) max = tmp }
+        return max
+    }
+
+    private fun getNbCells(maskFile: File): Int {
+        val elms = maskFile.name.split(".")[0].split("_")
+        return elms.last().toInt()
     }
 }
 

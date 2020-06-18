@@ -9,6 +9,15 @@ fun randomColor(): String {
     return randomValue(randomColorList)
 }
 
+fun getFileStatusColor(status: Int) : String{
+    if((status)>= colorList.size){
+        Log.error("Invalid category, not found color")
+        return colorList[colorList.size-1];}
+    if(status<0)
+        return colorList[0]
+    return colorList[status]
+}
+
 fun getColor(category: Int) : String{
     if((category)>= colorList.size){
         Log.error("Invalid category, not found color")

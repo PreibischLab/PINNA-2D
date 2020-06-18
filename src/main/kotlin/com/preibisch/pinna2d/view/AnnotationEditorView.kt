@@ -26,9 +26,6 @@ class AnnotationEditorView : View("Annotations") {
             fieldset {
                 field("image:") {
                     label(model.imageName)
-//                    textfield(model.imageName){
-//                        isEditable = false
-//                    }
                 }
             }
             fieldset {
@@ -54,7 +51,6 @@ class AnnotationEditorView : View("Annotations") {
                 controller.tableview = tableview<AnnotationEntryModel> {
 
                     items = controller.items
-//                    mTableView = editModel
                     column("ID", AnnotationEntryModel::annotationId)
                     column("Category", AnnotationEntryModel::annotationVal).cellFormat {
                         val circle = Circle(10.0)
@@ -65,10 +61,7 @@ class AnnotationEditorView : View("Annotations") {
                         text = if (item.toInt() < 0) "" else it.toString()
                     }
 
-//                    selectionModel.select(10)
-
                     onSelectionChange {
-
                         if (it != null) {
                             model.id.value = it.id.value
                             model.entryDate.value = it.entryDate.value
@@ -78,12 +71,10 @@ class AnnotationEditorView : View("Annotations") {
                             enableCategoryButtons()
                             if (it.annotationId.value != null) {
                                 imageController.select(it.annotationId.value.toFloat())
-
                             }
 
                         }
                     }
-//                sortOrder.add(xx)
                 }
 
             }
@@ -99,7 +90,6 @@ class AnnotationEditorView : View("Annotations") {
     private fun getButton(category: Int, group: ToggleGroup): ToggleButton {
 
         return togglebutton(group = group) {
-//            text = category.toString()
             userData = category
             toggleGroupProperty().set(group)
             val circle = Circle(10.0)
@@ -138,6 +128,5 @@ class AnnotationEditorView : View("Annotations") {
         controller.update(model)
         controller.tableview.selectionModel.selectNext()
         Imp.get().add(model.annotationId.value.toFloat(),model.annotationVal.value.toInt())
-//        controller.items.up
     }
 }
