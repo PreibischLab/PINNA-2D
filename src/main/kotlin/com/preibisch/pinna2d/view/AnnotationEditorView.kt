@@ -79,6 +79,10 @@ class AnnotationEditorView : View("Annotations") {
                 }
 
             }
+            borderpane {  right = button("Export Statistics") {
+                setOnAction { controller.exportStatistics() }
+            } }
+
         }
     }
 

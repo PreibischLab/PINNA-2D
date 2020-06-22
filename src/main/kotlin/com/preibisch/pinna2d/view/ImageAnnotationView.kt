@@ -13,12 +13,10 @@ import java.io.File
 class ImageAnnotationView : View("Image View") {
 
     private val imageController: ImageController by inject()
-    private var myLabel: Label by singleAssign()
 
     var scrollPane = ScrollPane()
     override val root = borderpane {
         EventControllers().addEventsListners(imageController.imageView)
-//        imageView.image = imageController.image
 
         scrollPane.setPrefSize(300.0, 250.0)
         scrollPane.vbarPolicy = ScrollBarPolicy.AS_NEEDED
@@ -26,20 +24,10 @@ class ImageAnnotationView : View("Image View") {
         scrollPane.content =  imageController.imageView
         center = scrollPane
 
-//            label {
-//                myLabel = this
-//                bind(imageController.mText)
-//        }
-
     }.apply {
         style {
             backgroundColor += c("#E0EEEE")
         }
-
-
-//        addEventFilter(MouseDragEvent.MOUSE_CLICKED){
-////            annotationController.addRandomText()
-//        }
 
     }
     fun save(file: File) {

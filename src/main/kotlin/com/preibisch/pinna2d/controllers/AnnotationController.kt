@@ -19,7 +19,7 @@ import java.time.LocalDate
 class AnnotationController : Controller() {
 
     private val imageController: ImageController by inject()
-    var annotationsModel = AnnotationEntryModel()
+//    var annotationsModel = AnnotationEntryModel()
     var tableview: TableView<AnnotationEntryModel> by singleAssign()
 
     //    get All Items
@@ -68,7 +68,6 @@ class AnnotationController : Controller() {
                 it[spaceDims] = updatedItem.spaceDims.value.toLong()
             }
         }
-
     }
 
     fun delete(model: AnnotationEntryModel) {
@@ -81,7 +80,7 @@ class AnnotationController : Controller() {
 //        removeModelFromPie(model)
     }
 
-    fun newEntry(img: String, min: Int, max: Int) {
+    private fun newEntry(img: String, min: Int, max: Int) {
         for (i in min..max) {
             add(LocalDate.now(), img, i.toFloat(), -1,0)
 
@@ -93,7 +92,7 @@ class AnnotationController : Controller() {
         items.clear()
 //        items = FXCollections.observableArrayList();
         val exists = checkExist(imageName)
-        if (exists == false)
+        if (!exists)
             newEntry(imageName, min.toInt(), max.toInt())
         else {
 
@@ -143,6 +142,10 @@ class AnnotationController : Controller() {
             Log.error("Not found $v")
         else
             tableview.selectionModel.select(position)
+    }
+
+    fun exportStatistics() {
+        TODO("Not yet implemented")
     }
 
 

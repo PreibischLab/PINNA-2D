@@ -1,6 +1,7 @@
 package com.preibisch.pinna2d.util
 
 import com.preibisch.pinna2d.model.AnnotationEntryTbl
+import com.preibisch.pinna2d.model.ImageEntryTbl
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.Transaction
@@ -21,6 +22,7 @@ fun enableConsoleLogger() {
 fun createTables() {
     with(newTransaction()) {
         SchemaUtils.create(AnnotationEntryTbl)
+        SchemaUtils.create(ImageEntryTbl)
     }
 }
 

@@ -3,7 +3,7 @@ package com.preibisch.pinna2d.view
 import com.preibisch.pinna2d.app.AnnotationWorkspace
 import com.preibisch.pinna2d.app.Styles
 import com.preibisch.pinna2d.controllers.FilesAnalyzeManager
-import com.preibisch.pinna2d.model.FileAnalyzeData
+import com.preibisch.pinna2d.model.ImageEntryModel
 import com.preibisch.pinna2d.util.INPUT_FOLDER
 import com.preibisch.pinna2d.util.MASKS_FOLDER
 import com.preibisch.pinna2d.util.getFileStatusColor
@@ -61,17 +61,18 @@ class FileSelectionView : View("Select Inputs") {
 //            columnResizePolicy = CONSTRAINED_RESIZE_POLICY
             vgrow = Priority.ALWAYS
             bindSelected(controller.selectedFile)
-            column("Status",FileAnalyzeData::status).cellFormat {
+            column("Status",ImageEntryModel::status).cellFormat {
                 val circle = Circle(10.0)
                 circle.stroke = Color.BLACK
                 circle.strokeWidth = 1.0
                 circle.fill = c(getFileStatusColor(item.toInt()))
                 graphic = circle
-                text = getStatus(it)
+                text = getStatus(it.toInt())
             }
-            column("File Name",FileAnalyzeData::fileName)
+            column("File Name",ImageEntryModel::fileName)
 //            column("Masks Found",FileAnalyzeData::nbMasks)
-            column("Cells",FileAnalyzeData::totalCells)
+            column("Cells",ImageEntryModel::nbCells)
+            column("Classified",ImageEntryModel::nbClassifiedCells)
         }
         button("Next") {
             prefWidth = 600.0

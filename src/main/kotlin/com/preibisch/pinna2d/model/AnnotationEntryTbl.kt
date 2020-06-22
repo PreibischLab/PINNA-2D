@@ -1,9 +1,6 @@
 package com.preibisch.pinna2d.model
 
-import com.preibisch.pinna2d.model.AnnotationEntryTbl.autoIncrement
-import com.preibisch.pinna2d.model.AnnotationEntryTbl.primaryKey
 import com.preibisch.pinna2d.util.toJavaLocalDate
-import javafx.beans.binding.Bindings
 import javafx.beans.property.*
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
@@ -17,7 +14,6 @@ fun ResultRow.toAnnotationEntry() = AnnotationEntry(
         this[AnnotationEntryTbl.annotationId].toFloat(),
         this[AnnotationEntryTbl.annotationVal].toInt(),
         this[AnnotationEntryTbl.spaceDims].toLong()
-
 )
 
 object AnnotationEntryTbl : Table() {
