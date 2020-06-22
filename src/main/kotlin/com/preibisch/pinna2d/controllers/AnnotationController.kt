@@ -39,20 +39,21 @@ class AnnotationController : Controller() {
         items = FXCollections.observableArrayList();
     }
 
-    fun add(newEntryDate: LocalDate, newImageName: String, newAnnotationId: Float, newAnnotationVal: Int): AnnotationEntry {
+    fun add(newEntryDate: LocalDate, newImageName: String, newAnnotationId: Float, newAnnotationVal: Int, spaceVal: Long): AnnotationEntry {
         val newEntry = execute {
             AnnotationEntryTbl.insert {
                 it[entryDate] = newEntryDate.toDate()
                 it[imageName] = newImageName
                 it[annotationId] = newAnnotationId
                 it[annotationVal] = newAnnotationVal
+                it[spaceDims] = spaceVal
             }
         }
         items.add(AnnotationEntryModel().apply {
-            item = AnnotationEntry(newEntry[AnnotationEntryTbl.id], newEntryDate, newImageName, newAnnotationId, newAnnotationVal)
+            item = AnnotationEntry(newEntry[AnnotationEntryTbl.id], newEntryDate, newImageName, newAnnotationId, newAnnotationVal,spaceVal)
         })
 //        pieItemsData.add(PieChart.Data(newItem,newPrice))
-        return AnnotationEntry(newEntry[AnnotationEntryTbl.id], newEntryDate, newImageName, newAnnotationId, newAnnotationVal)
+        return AnnotationEntry(newEntry[AnnotationEntryTbl.id], newEntryDate, newImageName, newAnnotationId, newAnnotationVal,spaceVal)
     }
 
     fun update(updatedItem: AnnotationEntryModel): Int {
@@ -64,6 +65,7 @@ class AnnotationController : Controller() {
                 it[imageName] = updatedItem.imageName.value
                 it[annotationId] = updatedItem.annotationId.value.toFloat()
                 it[annotationVal] = updatedItem.annotationVal.value.toInt()
+                it[spaceDims] = updatedItem.spaceDims.value.toLong()
             }
         }
 
@@ -81,7 +83,7 @@ class AnnotationController : Controller() {
 
     fun newEntry(img: String, min: Int, max: Int) {
         for (i in min..max) {
-            add(LocalDate.now(), img, i.toFloat(), -1)
+            add(LocalDate.now(), img, i.toFloat(), -1,0)
 
         }
     }

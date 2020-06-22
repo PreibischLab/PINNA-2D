@@ -15,7 +15,8 @@ fun ResultRow.toAnnotationEntry() = AnnotationEntry(
         this[AnnotationEntryTbl.entryDate].toJavaLocalDate(),
         this[AnnotationEntryTbl.imageName],
         this[AnnotationEntryTbl.annotationId].toFloat(),
-        this[AnnotationEntryTbl.annotationVal].toInt()
+        this[AnnotationEntryTbl.annotationVal].toInt(),
+        this[AnnotationEntryTbl.spaceDims].toLong()
 
 )
 
@@ -26,9 +27,11 @@ object AnnotationEntryTbl : Table() {
     val imageName = varchar("image_name", length = 100)
     val annotationId = float("annotation_id")
     val annotationVal = integer("annotation_val")
+
+    val spaceDims = long("space_dims")
 }
 
-class AnnotationEntry(id: Int, entryDate: LocalDate, imageName: String, annotationId: Float, annotationVal : Int) {
+class AnnotationEntry(id: Int, entryDate: LocalDate, imageName: String, annotationId: Float, annotationVal : Int, spaceVal: Long) {
     val idProperty = SimpleIntegerProperty(id)
     var id by idProperty
 
@@ -44,6 +47,8 @@ class AnnotationEntry(id: Int, entryDate: LocalDate, imageName: String, annotati
     val annotationValProperty = SimpleIntegerProperty(annotationVal)
     var annotationVal by annotationValProperty
 
+    val spaceDimsProperty = SimpleLongProperty(spaceVal)
+    var spaceDims by spaceDimsProperty
 
 //    var totalAnnotation = Bindings.add(1, 0)
 
@@ -58,5 +63,6 @@ class AnnotationEntryModel : ItemViewModel<AnnotationEntry>() {
     val imageName = bind { item?.imageNameProperty }
     val annotationId = bind { item?.annotationIdProperty }
     val annotationVal = bind { item?.annotationValProperty }
+    val spaceDims = bind { item?.spaceDimsProperty }
 }
 

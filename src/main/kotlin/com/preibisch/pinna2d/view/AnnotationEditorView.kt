@@ -60,6 +60,7 @@ class AnnotationEditorView : View("Annotations") {
                         graphic = circle
                         text = if (item.toInt() < 0) "" else it.toString()
                     }
+                    column("Size", AnnotationEntryModel::spaceDims)
 
                     onSelectionChange {
                         if (it != null) {
@@ -119,14 +120,18 @@ class AnnotationEditorView : View("Annotations") {
     }
 
     private fun changeCategory(category: Int) {
+
+        val size = Imp.get().add(model.annotationId.value.toFloat(), category)
         println("change category $category")
         model.annotationVal.value = category
+        model.spaceDims.value = size
         for (it in controller.items) {
-            if (it.id.value == model.id.value)
+            if (it.id.value == model.id.value) {
                 it.annotationVal.value = category
+                it.spaceDims.value = size
+            }
         }
         controller.update(model)
         controller.tableview.selectionModel.selectNext()
-        Imp.get().add(model.annotationId.value.toFloat(),model.annotationVal.value.toInt())
     }
 }

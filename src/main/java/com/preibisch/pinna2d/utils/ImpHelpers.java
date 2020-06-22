@@ -182,7 +182,8 @@ public class ImpHelpers {
         return val.getInteger();
     }
 
-    public static void add(Img<FloatType> masks, IntervalView<FloatType> result, float value, int category) {
+    public static long add(Img<FloatType> masks, IntervalView<FloatType> result, float value, int category) {
+        long size = 0 ;
         Cursor<FloatType> cursorInput = masks.cursor();
 
         RandomAccess<FloatType> randomAccess = result.randomAccess();
@@ -192,8 +193,11 @@ public class ImpHelpers {
             if (cursorInput.get().get() == value) {
                 randomAccess.setPosition(cursorInput);
                 randomAccess.get().set(category);
+                size += 1;
             }
         }
+        Log.info("size: "+size);
+        return size;
     }
 
 

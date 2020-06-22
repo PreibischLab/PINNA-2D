@@ -1,5 +1,6 @@
 package com.preibisch.pinna2d.view
 
+import com.preibisch.pinna2d.app.AnnotationWorkspace
 import com.preibisch.pinna2d.app.Styles
 import com.preibisch.pinna2d.controllers.FilesAnalyzeManager
 import com.preibisch.pinna2d.model.FileAnalyzeData
@@ -79,7 +80,7 @@ class FileSelectionView : View("Select Inputs") {
                 controller.selectedFile.isNotNull
             }
             setOnAction {
-
+//                AnnotationWorkspace().
             }
         }
     }
