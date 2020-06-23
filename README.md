@@ -1,3 +1,4 @@
+![PINNA](images/PINNA.png "")
 # PINNA-2D
 PINNA 2D - Pixel-wIse NeuroN Annotation
 
