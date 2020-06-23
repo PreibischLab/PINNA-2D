@@ -2,7 +2,6 @@ package com.preibisch.pinna2d.tools;
 
 import com.preibisch.pinna2d.util.DEFAULTKt;
 import com.preibisch.pinna2d.utils.ImpHelpers;
-import com.preibisch.pinna2d.utils.Utils;
 import ij.CompositeImage;
 import ij.ImagePlus;
 import ij.plugin.LutLoader;
@@ -20,7 +19,7 @@ import java.io.IOException;
 
 //< T extends RealType< T > & NativeType< T >>
 public class Imp extends ImpHelpers {
-    private final LUT lut;
+    private LUT lut;
     //    private List<Integer> category_vals;
     private final static int CLICK_VALUE = 255;
     public final static int WITH_CLICK = 2, WITHOUT_CLICK = 1;
@@ -53,14 +52,19 @@ public class Imp extends ImpHelpers {
     public Image toImage() {
         gui_image.updateImage();
         int position = categoryChannel+1;
-        Log.info("Position : "+position);
-        Log.info( Utils.toString(gui_image.getDimensions()));
-        gui_image.setChannelLut(lut, position);
+        if(lut!=null)
+            gui_image.setChannelLut(lut, position);
         return ImpHelpers.toImage(gui_image);
     }
 
     private Imp(String imagePath, String maskPath, int mode) throws IOException {
-        lut = LutLoader.openLut(DEFAULTKt.getLUT_PATH());
+//        String p = Imp.class.getClassLoader().getResource("glasbey_inverted.lut").getPath();
+        File LUT_PATH = new File(DEFAULTKt.getLut_path());
+        Log.info("Lut path: "+LUT_PATH.getAbsolutePath());
+        if (LUT_PATH.exists())
+        lut = LutLoader.openLut(LUT_PATH.getAbsolutePath());
+        else
+            Log.error("Lut not found !");
 
         switch (mode) {
             case WITH_CLICK:

@@ -6,7 +6,7 @@ import javafx.stage.Stage;
 import org.scijava.command.Command;
 import org.scijava.plugin.Plugin;
 
-@Plugin(type = Command.class, menuPath = "Plugins>PINNA Annotation>Pinna2D")
+@Plugin(type = Command.class, menuPath = "Plugins>PINNA-Annotation>Pinna2D")
 public class Pinna2D implements PlugIn, Command {
     @Override
     public void run() {
@@ -20,7 +20,6 @@ public class Pinna2D implements PlugIn, Command {
             app.start(new Stage());
         });
     }
-
 
     public static void main(String[] args) {
         new Pinna2D().run();

@@ -21,6 +21,7 @@ class FileSelectionView : View("Init Project") {
     var projectFolder = SimpleStringProperty(PROJECT_FOLDER)
     var input = SimpleStringProperty(INPUT_FOLDER)
     var mask = SimpleStringProperty(MASKS_FOLDER)
+    var lut = SimpleStringProperty("")
 
     override val root = form {
             paddingAll = 10.0
@@ -40,7 +41,7 @@ class FileSelectionView : View("Init Project") {
                     textfield(input)
                     button("Select") {
                         setOnAction {
-                            input.value = openFileChooser()
+                            input.value =  openFolderChooser()
                         }
                         addClass(Styles.inputButtonStyle)
                     }
@@ -49,7 +50,18 @@ class FileSelectionView : View("Init Project") {
                     textfield(mask)
                     button("Select") {
                         setOnAction {
-                            mask.value = openFileChooser()
+                            mask.value = openFolderChooser()
+                        }
+                        addClass(Styles.inputButtonStyle)
+                    }
+                }
+
+                field("Lut Color") {
+                    textfield(lut)
+                    button("Select") {
+                        setOnAction {
+                            lut.value = openLutFileChooser(null)?.path ?: ""
+                            lut_path = lut.value
                         }
                         addClass(Styles.inputButtonStyle)
                     }
@@ -97,6 +109,8 @@ class FileSelectionView : View("Init Project") {
                 }
             }
     }
+
+
 
     private fun next(value: ImageEntryModel) {
         when {
