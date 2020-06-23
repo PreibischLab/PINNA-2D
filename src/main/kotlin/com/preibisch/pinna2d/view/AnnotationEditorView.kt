@@ -73,7 +73,6 @@ class AnnotationEditorView : View("Annotations") {
                             if (it.annotationId.value != null) {
                                 imageController.select(it.annotationId.value.toFloat())
                             }
-
                         }
                     }
                 }

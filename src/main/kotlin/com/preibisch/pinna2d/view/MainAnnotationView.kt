@@ -18,26 +18,28 @@ class MainAnnotationView : View("Annotation") {
         left = annotationEditorView.root
     }
 
-    override fun onCreate() {
-        val inputView = InputView()
-        inputView.openWindow()
-//        inputView.onBeforeShow()
+//    override fun onCreate() {
+//        val inputView = InputView()
+//        inputView.openWindow()
+////        inputView.onBeforeShow()
+//
+//    }
 
-    }
+//    override fun onRefresh() {
+//        super.onRefresh()
+//    }
 
-    override fun onRefresh() {
-        super.onRefresh()
-    }
-
-    override fun onDelete() {
-        super.onDelete()
-    }
+//    override fun onDelete() {
+//        super.onDelete()
+//    }
     override fun onSave() {
         Log.info("save")
         var chooser = FileChooser()
         val name = "Hello"
+    
         chooser.initialFileName = name
-        chooser.extensionFilters.add(FileChooser.ExtensionFilter("TIFF file ", "*.tiff"))
+    chooser.extensionFilters.add(FileChooser.ExtensionFilter("TIF file ", "*.tif"))
+    chooser.extensionFilters.add(FileChooser.ExtensionFilter("TIFF file ", "*.tiff"))
         chooser.extensionFilters.add(FileChooser.ExtensionFilter("PNG file ", "*.png"))
         val file = chooser.showSaveDialog(this.currentWindow)
         Log.info(file.toString())

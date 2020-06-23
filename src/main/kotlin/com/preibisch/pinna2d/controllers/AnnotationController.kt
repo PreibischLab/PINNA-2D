@@ -14,10 +14,13 @@ import javafx.collections.ObservableList
 import javafx.scene.control.TableView
 import org.jetbrains.exposed.sql.*
 import tornadofx.*
+import java.io.File
 import java.time.LocalDate
 
 class AnnotationController : Controller() {
 
+    private var folder = ""
+    private var currentImage = ""
     private val imageController: ImageController by inject()
 //    var annotationsModel = AnnotationEntryModel()
     var tableview: TableView<AnnotationEntryModel> by singleAssign()
@@ -87,7 +90,9 @@ class AnnotationController : Controller() {
         }
     }
 
-    fun start(imageName: String, min: Float, max: Float) {
+    fun start(projectFolder: String, imageName: String, min: Float, max: Float) {
+        folder = projectFolder
+        currentImage = imageName
 //        items.removeAll()
         items.clear()
 //        items = FXCollections.observableArrayList();
@@ -145,7 +150,9 @@ class AnnotationController : Controller() {
     }
 
     fun exportStatistics() {
-        TODO("Not yet implemented")
+       val basename = currentImage.split(".")[0]
+        val f = File(folder,String.format("%s.csv",basename))
+        f.toAnnotationCSV(items)
     }
 
 

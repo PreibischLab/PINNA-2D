@@ -37,15 +37,17 @@ class FilesAnalyzeManager : Controller() {
         val assembledData: Map<File, List<File>> = assembleInputWithMasks(inputFiles, maskFiles)
 
         assembledData.forEach { (t, u) ->
-            add(LocalDate.now(), t.name, u.size, getMaxCells(u), 0,0)
+            val bestMask = getMaxCells(u)
+            add(LocalDate.now(), t.name, bestMask.name, u.size, getNbCells(bestMask), 0, 0)
         }
     }
 
-    fun add(newEntryDate: LocalDate, newImageName: String, newNbMasks: Int, newNbCells: Int, newNbClassifiedCells: Int, newStatus: Int): ImageEntry {
+    fun add(newEntryDate: LocalDate, newImageName: String, newMaskFile: String, newNbMasks: Int, newNbCells: Int, newNbClassifiedCells: Int, newStatus: Int): ImageEntry {
         val newEntry = execute {
             ImageEntryTbl.insert {
                 it[entryDate] = newEntryDate.toDate()
                 it[fileName] = newImageName
+                it[maskFile] = newMaskFile
                 it[nbMasks] = newNbMasks
                 it[nbCells] = newNbCells
                 it[nbClassifiedCells] = newNbClassifiedCells
@@ -53,9 +55,9 @@ class FilesAnalyzeManager : Controller() {
             }
         }
         files.add(ImageEntryModel().apply {
-            item = ImageEntry(newEntry[ImageEntryTbl.id], newEntryDate, newImageName, newNbMasks, newNbCells, newNbClassifiedCells, newStatus)
+            item = ImageEntry(newEntry[ImageEntryTbl.id], newEntryDate, newImageName, newMaskFile, newNbMasks, newNbCells, newNbClassifiedCells, newStatus)
         })
-        return ImageEntry(newEntry[ImageEntryTbl.id], newEntryDate, newImageName, newNbMasks, newNbCells, newNbClassifiedCells, newStatus)
+        return ImageEntry(newEntry[ImageEntryTbl.id], newEntryDate, newImageName, newMaskFile, newNbMasks, newNbCells, newNbClassifiedCells, newStatus)
     }
 
     fun update(updatedItem: ImageEntryModel): Int {
@@ -73,13 +75,17 @@ class FilesAnalyzeManager : Controller() {
         }
     }
 
-    private fun getMaxCells(maskFiles: List<File>): Int {
+    private fun getMaxCells(maskFiles: List<File>): File {
+        var f = maskFiles.first()
         var max = 0
         maskFiles.forEach {
             val tmp = getNbCells(it)
-            if (tmp > max) max = tmp
+            if (tmp > max) {
+                max = tmp
+                f = it
+            }
         }
-        return max
+        return f
     }
 
     private fun getNbCells(maskFile: File): Int {

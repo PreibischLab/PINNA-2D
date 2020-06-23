@@ -1,18 +1,13 @@
 package com.preibisch.pinna2d.app
 
-import com.preibisch.pinna2d.controllers.AnnotationController
-import com.preibisch.pinna2d.util.createTables
-import com.preibisch.pinna2d.util.enableConsoleLogger
+import com.preibisch.pinna2d.tools.Log
 import com.preibisch.pinna2d.view.FileSelectionView
-import com.preibisch.pinna2d.view.MainAnnotationView
-import javafx.application.Platform
-import javafx.scene.control.Menu
 import javafx.scene.control.TabPane
-import org.jetbrains.exposed.sql.Database
 import tornadofx.*
 
-class AnnotationWorkspace: Workspace("Budget Tracker Workspace", NavigationMode.Tabs) {
+class AnnotationWorkspace : Workspace("PINNA-2D", NavigationMode.Tabs) {
     init {
+        scope.workspace = this
 //        menubar {
 //            menu("File") {
 //                item("New").action {
@@ -38,9 +33,14 @@ class AnnotationWorkspace: Workspace("Budget Tracker Workspace", NavigationMode.
 //
 //        }
         // doc our views
-        dock<FileSelectionView>()
-        dock<MainAnnotationView>()
+        val select = dock<FileSelectionView>()
+
+//        dock<MainAnnotationView>()
         tabContainer.tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE
+    }
+
+    fun startAnnotation() {
+        Log.info("Start Annotation")
     }
 
 }

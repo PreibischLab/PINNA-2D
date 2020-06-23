@@ -1,6 +1,6 @@
 package com.preibisch.pinna2d.model
 
-import com.preibisch.pinna2d.util.toJavaLocalDate
+import com.preibisch.pinna2d.util.*
 import javafx.beans.property.*
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
@@ -17,14 +17,12 @@ fun ResultRow.toAnnotationEntry() = AnnotationEntry(
 )
 
 object AnnotationEntryTbl : Table() {
-
-    val id = integer("id").autoIncrement().primaryKey()
-    val entryDate = date("entry_date")
-    val imageName = varchar("image_name", length = 100)
-    val annotationId = float("annotation_id")
-    val annotationVal = integer("annotation_val")
-
-    val spaceDims = long("space_dims")
+    val id = integer(id_string).autoIncrement().primaryKey()
+    val entryDate = date(entry_date)
+    val imageName = varchar(image_name, length = 100)
+    val annotationId = float(annotation_id)
+    val annotationVal = integer(annotation_val)
+    val spaceDims = long(space_dims)
 }
 
 class AnnotationEntry(id: Int, entryDate: LocalDate, imageName: String, annotationId: Float, annotationVal : Int, spaceVal: Long) {
@@ -46,8 +44,6 @@ class AnnotationEntry(id: Int, entryDate: LocalDate, imageName: String, annotati
     val spaceDimsProperty = SimpleLongProperty(spaceVal)
     var spaceDims by spaceDimsProperty
 
-//    var totalAnnotation = Bindings.add(1, 0)
-
     override fun toString(): String {
         return "AnnotationEntry(id=$id, entryDate=$entryDate, imageName=$imageName, annotationId=$annotationId, annotationVal=$annotationVal"
     }
@@ -60,5 +56,9 @@ class AnnotationEntryModel : ItemViewModel<AnnotationEntry>() {
     val annotationId = bind { item?.annotationIdProperty }
     val annotationVal = bind { item?.annotationValProperty }
     val spaceDims = bind { item?.spaceDimsProperty }
+
+    fun toRow():String{
+        return String.format("%.2f,%d,%d", annotationId.value, annotationVal.value, spaceDims.value)
+    }
 }
 

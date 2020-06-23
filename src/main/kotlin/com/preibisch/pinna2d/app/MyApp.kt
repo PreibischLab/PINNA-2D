@@ -19,8 +19,8 @@ class MyApp: App(AnnotationWorkspace::class, Styles::class){
     override fun start(stage: Stage) {
 
         with(stage){
-//            width = 1000.0
-//            height = 800.0
+            width = 1000.0
+            height = 800.0
 //            scene.setOnKeyPressed {
 //                println("pressed:" + it.character)
 //            }
@@ -35,6 +35,7 @@ class MyApp: App(AnnotationWorkspace::class, Styles::class){
     }
 
     init {
+
         // Initialize DB
         enableConsoleLogger()
         Database.connect("jdbc:sqlite:./pinny-annotations.db", "org.sqlite.JDBC")

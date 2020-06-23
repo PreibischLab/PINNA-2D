@@ -1,5 +1,7 @@
 package com.preibisch.pinna2d.util
 
+import javafx.stage.DirectoryChooser
+import javafx.stage.FileChooser
 import java.io.File
 import java.io.IOException
 
@@ -23,4 +25,19 @@ fun getFiles(folder: File, extension: String): Array<File> {
         throw IOException("Folder ${folder.absolutePath} not Found!")
     return folder.listFiles { _, name -> name.toLowerCase().endsWith(extension) }
             ?: throw IOException("No files with extension $extension in ${folder.absolutePath}")
+}
+
+fun openFileChooser(): String {
+    var chooser = FileChooser()
+    chooser.extensionFilters.add(FileChooser.ExtensionFilter("TIF file ", "*.tif"))
+    chooser.extensionFilters.add(FileChooser.ExtensionFilter("TIFF file ", "*.tiff"))
+    chooser.extensionFilters.add(FileChooser.ExtensionFilter("PNG file ", "*.png"))
+    val file = chooser.showOpenDialog(null)
+    return file?.toString() ?: ""
+}
+
+fun openFolderChooser(): String {
+    var chooser = DirectoryChooser()
+    val file = chooser.showDialog(null)
+    return file?.toString() ?: ""
 }
