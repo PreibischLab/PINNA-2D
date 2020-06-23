@@ -1,9 +1,16 @@
 package com.preibisch.pinna2d.util
 
+import com.preibisch.pinna2d.tools.Log
+import javafx.scene.control.Alert
+import javafx.scene.control.Alert.AlertType
+import javafx.scene.control.ButtonType
 import javafx.stage.DirectoryChooser
 import javafx.stage.FileChooser
+import javafx.stage.Window
+import tornadofx.*
 import java.io.File
 import java.io.IOException
+
 
 fun assembleInputWithMasks(inputFiles: Array<File>, maskFiles: Array<File>): Map<File, List<File>> {
     var result = HashMap<File, List<File>>()
@@ -40,4 +47,25 @@ fun openFolderChooser(): String {
     var chooser = DirectoryChooser()
     val file = chooser.showDialog(null)
     return file?.toString() ?: ""
+}
+
+fun imageSaverBox(currentWindow: Window?): File? {
+    Log.info("save")
+    var chooser = FileChooser()
+    val name = String.format("%s_instances.tif", CURRENT_IMAGE.split(".")[0])
+    chooser.initialDirectory = File(PROJECT_FOLDER)
+    chooser.initialFileName = name
+    chooser.extensionFilters.add(FileChooser.ExtensionFilter("TIF file ", "*.tif"))
+    chooser.extensionFilters.add(FileChooser.ExtensionFilter("TIFF file ", "*.tiff"))
+    chooser.extensionFilters.add(FileChooser.ExtensionFilter("PNG file ", "*.png"))
+    val file = chooser.showSaveDialog(currentWindow)
+    Log.info(file.toString())
+    return file
+}
+
+fun showPopup(condition: Boolean,title: String, msg: String){
+    if (condition)
+        information(title,msg)
+    else
+        error(title,msg)
 }

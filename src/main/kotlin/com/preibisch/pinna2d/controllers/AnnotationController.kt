@@ -8,6 +8,7 @@ import com.preibisch.pinna2d.model.toAnnotationEntry
 import com.preibisch.pinna2d.tools.Imp
 import com.preibisch.pinna2d.tools.Log
 import com.preibisch.pinna2d.util.execute
+import com.preibisch.pinna2d.util.showPopup
 import com.preibisch.pinna2d.util.toDate
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
@@ -36,10 +37,11 @@ class AnnotationController : Controller() {
         items = FXCollections.observableArrayList();
     }
 
-    fun add(newEntryDate: LocalDate, newImageName: String, newAnnotationId: Float, newAnnotationVal: Int, spaceVal: Long): AnnotationEntry {
+    fun add(newImageId: Int,newEntryDate: LocalDate, newImageName: String, newAnnotationId: Float, newAnnotationVal: Int, spaceVal: Long): AnnotationEntry {
         val newEntry = execute {
             AnnotationEntryTbl.insert {
                 it[entryDate] = newEntryDate.toDate()
+                it[imageId] = newImageId
                 it[imageName] = newImageName
                 it[annotationId] = newAnnotationId
                 it[annotationVal] = newAnnotationVal
@@ -47,10 +49,10 @@ class AnnotationController : Controller() {
             }
         }
         items.add(AnnotationEntryModel().apply {
-            item = AnnotationEntry(newEntry[AnnotationEntryTbl.id], newEntryDate, newImageName, newAnnotationId, newAnnotationVal, spaceVal)
+            item = AnnotationEntry(newEntry[AnnotationEntryTbl.id], newEntryDate, newImageId,newImageName, newAnnotationId, newAnnotationVal, spaceVal)
         })
 //        pieItemsData.add(PieChart.Data(newItem,newPrice))
-        return AnnotationEntry(newEntry[AnnotationEntryTbl.id], newEntryDate, newImageName, newAnnotationId, newAnnotationVal, spaceVal)
+        return AnnotationEntry(newEntry[AnnotationEntryTbl.id], newEntryDate, newImageId, newImageName, newAnnotationId, newAnnotationVal, spaceVal)
     }
 
     fun update(updatedItem: AnnotationEntryModel): Int {
@@ -77,20 +79,20 @@ class AnnotationController : Controller() {
 //        removeModelFromPie(model)
     }
 
-    private fun newEntry(img: String, min: Int, max: Int) {
+    private fun newEntry(imageId: Int, img: String, min: Int, max: Int) {
         for (i in min..max) {
-            add(LocalDate.now(), img, i.toFloat(), -1, 0)
+            add(imageId,LocalDate.now(), img, i.toFloat(), -1, 0)
 
         }
     }
 
-    fun start(projectFolder: String, imageName: String, min: Float, max: Float) {
+    fun start(imageId: Int, projectFolder: String, imageName: String, min: Float, max: Float) {
         folder = projectFolder
         currentImage = imageName
         items.clear()
         val exists = checkExist(imageName)
         if (!exists)
-            newEntry(imageName, min.toInt(), max.toInt())
+            newEntry(imageId, imageName, min.toInt(), max.toInt())
         else {
             val newItems = execute {
                 AnnotationEntryTbl.select { AnnotationEntryTbl.imageName eq imageName }.map {
@@ -148,7 +150,8 @@ class AnnotationController : Controller() {
     fun exportStatistics() {
         val basename = currentImage.split(".")[0]
         val f = File(folder, String.format("%s.csv", basename))
-        f.toAnnotationCSV(items)
+        val result = f.toAnnotationCSV(items)
+        showPopup(result,"Saving CSV file!",f.path)
     }
 
 

@@ -3,6 +3,7 @@ package com.preibisch.pinna2d.controllers
 import com.preibisch.pinna2d.model.AnnotationEntryModel
 import com.preibisch.pinna2d.tools.Imp
 import com.preibisch.pinna2d.tools.Log
+import com.preibisch.pinna2d.util.showPopup
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Point2D
 import javafx.scene.Node
@@ -63,7 +64,8 @@ class ImageController : Controller() {
     }
 
     fun save(file: File) {
-        Imp.get().save(file)
+        val result =  Imp.get().save(file)
+        showPopup(result,"Saving file!",file.path)
     }
 
     fun select(v: Float) {

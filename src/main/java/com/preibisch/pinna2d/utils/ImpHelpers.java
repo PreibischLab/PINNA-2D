@@ -239,10 +239,10 @@ public class ImpHelpers {
 
     }
 
-    public static void save(IntervalView<FloatType> view, File file) {
+    public static boolean save(IntervalView<FloatType> view, File file) {
         ImagePlus imp = ImageJFunctions.wrap(view, "Categories");
         imp.show();
-        saveTiffStack(imp, file);
+        return saveTiffStack(imp, file);
     }
 
     /*

@@ -45,7 +45,8 @@ class FilesAnalyzeManager : Controller() {
         assembledData.forEach { (t, u) ->
             if (!checkExist(t.name, listOfItems)) {
                 val bestMask = getMaxCells(u)
-                add(LocalDate.now(), t.name, bestMask.name, u.size, getNbCells(bestMask), 0, 0)
+                val status = if (u.isNotEmpty()) 0 else 1
+                add(LocalDate.now(), t.name, bestMask.name, u.size, getNbCells(bestMask), 0, status)
             }
         }
 
@@ -70,10 +71,21 @@ class FilesAnalyzeManager : Controller() {
         return ImageEntry(newEntry[ImageEntryTbl.id], newEntryDate, newImageName, newMaskFile, newNbMasks, newNbCells, newNbClassifiedCells, newStatus)
     }
 
+    fun updateStatus(id: Int, newStatus: Int){
+        return execute {
+            ImageEntryTbl.update({
+                AnnotationEntryTbl.id eq (id)
+            }) {
+                it[status] = newStatus
+            }
+        }
+
+    }
+
     fun update(updatedItem: ImageEntryModel): Int {
         return execute {
             ImageEntryTbl.update({
-                AnnotationEntryTbl.id eq (updatedItem.id.value.toInt())
+                ImageEntryTbl.id eq (updatedItem.id.value.toInt())
             }) {
                 it[entryDate] = updatedItem.entryDate.value.toDate()
                 it[fileName] = updatedItem.fileName.value
@@ -111,6 +123,20 @@ class FilesAnalyzeManager : Controller() {
     private fun getNbCells(maskFile: File): Int {
         val elms = maskFile.name.split(".")[0].split("_")
         return elms.last().toInt()
+    }
+
+    fun startedImage(name: String) {
+        val newStatus = 1
+        for (f in files){
+            if (f.fileName.value == name){
+                Log.info("Update id: ${f.id.value}")
+                f.status.value = newStatus
+                update(f)
+                break
+            }
+        }
+
+
     }
 }
 

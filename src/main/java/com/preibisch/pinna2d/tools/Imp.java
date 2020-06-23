@@ -120,9 +120,9 @@ public class Imp extends ImpHelpers {
         return max.get();
     }
 
-    public void save(@NotNull File file) {
+    public boolean save(@NotNull File file) {
         int dims = img.numDimensions() - 1;
         IntervalView<FloatType> view = Views.hyperSlice(img, dims, categoryChannel);
-        save(view, file);
+       return save(view, file);
     }
 }

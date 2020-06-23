@@ -3,6 +3,7 @@ package com.preibisch.pinna2d.util
 //DB Images
 const val id_string = "id"
 const val entry_date = "entry_date"
+const val image_id = "image_id"
 const val image_name = "image_name"
 const val mask_file = "mask_file"
 const val nb_masks = "nb_masks"

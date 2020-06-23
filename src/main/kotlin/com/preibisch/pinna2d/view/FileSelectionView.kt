@@ -14,7 +14,7 @@ import javafx.scene.shape.Circle
 import tornadofx.*
 import java.io.File
 
-class FileSelectionView : View("Select Inputs") {
+class FileSelectionView : View("Init Project") {
 
     private val instanceController: InstanceController by inject()
     private val controller: FilesAnalyzeManager by inject()
@@ -30,7 +30,7 @@ class FileSelectionView : View("Select Inputs") {
                     textfield(projectFolder)
                     button("Select") {
                         setOnAction {
-                            projectFolder.value  = openFolderChooser()
+                            projectFolder.value = openFolderChooser()
                             checkProjectFolder(projectFolder.value)
                         }
                         addClass(Styles.inputButtonStyle)
@@ -40,7 +40,7 @@ class FileSelectionView : View("Select Inputs") {
                     textfield(input)
                     button("Select") {
                         setOnAction {
-                            input.value  = openFileChooser()
+                            input.value = openFileChooser()
                         }
                         addClass(Styles.inputButtonStyle)
                     }
@@ -49,66 +49,70 @@ class FileSelectionView : View("Select Inputs") {
                     textfield(mask)
                     button("Select") {
                         setOnAction {
-                            mask.value  = openFileChooser()
+                            mask.value = openFileChooser()
                         }
                         addClass(Styles.inputButtonStyle)
                     }
                 }
-            }
-            button("Scan") {
-                prefWidth = 600.0
-                alignment = Pos.CENTER
-                action {
-                    initDB(projectFolder.value)
-                    PROJECT_FOLDER = projectFolder.value
-                    controller.start(input.value,mask.value)
-                }
-                enableWhen{  input.isNotEmpty.and(mask.isNotEmpty)        }
-            }
 
-        tableview(controller.files) {
-            columnResizePolicy = SmartResize.POLICY
+
+                button("Scan") {
+                    prefWidth = 1200.0
+                    alignment = Pos.CENTER
+                    action {
+                        initDB(projectFolder.value)
+                        PROJECT_FOLDER = projectFolder.value
+                        controller.start(input.value, mask.value)
+                    }
+                    enableWhen { input.isNotEmpty.and(mask.isNotEmpty) }
+                }
+
+
+                tableview(controller.files) {
+                    columnResizePolicy = SmartResize.POLICY
 //            columnResizePolicy = CONSTRAINED_RESIZE_POLICY
-            vgrow = Priority.ALWAYS
-            bindSelected(controller.selectedFile)
-            column("Status",ImageEntryModel::status).cellFormat {
-                val circle = Circle(10.0)
-                circle.stroke = Color.BLACK
-                circle.strokeWidth = 1.0
-                circle.fill = c(getFileStatusColor(item.toInt()))
-                graphic = circle
-                text = getStatus(it.toInt())
+                    vgrow = Priority.ALWAYS
+                    bindSelected(controller.selectedFile)
+                    column("Status", ImageEntryModel::status).cellFormat {
+                        val circle = Circle(10.0)
+                        circle.stroke = Color.BLACK
+                        circle.strokeWidth = 1.0
+                        circle.fill = c(getFileStatusColor(item.toInt()))
+                        graphic = circle
+                        text = getStatus(it.toInt())
+                    }
+                    column("File Name", ImageEntryModel::fileName)
+                    column("Cells", ImageEntryModel::nbCells)
+                    column("Classified", ImageEntryModel::nbClassifiedCells)
+                }
+                button("Next") {
+                    prefWidth = 1200.0
+                    alignment = Pos.CENTER
+                    enableWhen {
+                        controller.selectedFile.isNotNull
+                    }
+                    setOnAction {
+                        next(controller.selectedFile.value)
+                    }
+                }
             }
-            column("File Name",ImageEntryModel::fileName)
-            column("Cells",ImageEntryModel::nbCells)
-            column("Classified",ImageEntryModel::nbClassifiedCells)
-        }
-        button("Next") {
-            prefWidth = 600.0
-            alignment = Pos.CENTER
-            enableWhen {
-                controller.selectedFile.isNotNull
-            }
-            setOnAction {
-                next()
-            }
-        }
     }
 
-    private fun next() {
+    private fun next(value: ImageEntryModel) {
         when {
             projectFolder.value == "" ->  Alert(Alert.AlertType.ERROR,"Invalid Project Folder").show()
             input.value == "" ->  Alert(Alert.AlertType.ERROR,"Invalid input").show()
             mask.value == "" -> Alert(Alert.AlertType.ERROR,"Invalid mask").show()
-            else -> start()
+            else -> start(value)
         }
     }
 
-    private fun start() {
+    private fun start(img: ImageEntryModel) {
         val selected = controller.selectedFile.value
         val inputFile = File(input.value,selected.fileName.value).absolutePath
         val maskFile = File(mask.value,selected.maskFile.value).absolutePath
-        instanceController.start(projectFolder.value,inputFile,maskFile)
+        CURRENT_IMAGE = img.fileName.value
+        instanceController.start(img.id.value.toInt(),projectFolder.value,inputFile,maskFile)
         initAnnotationView()
     }
 

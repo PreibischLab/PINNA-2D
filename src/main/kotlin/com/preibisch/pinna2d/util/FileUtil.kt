@@ -3,7 +3,7 @@ package com.preibisch.pinna2d.util
 import com.preibisch.pinna2d.tools.Log
 
 
-private val statusList: List<String> = listOf("Not stated Yet","No Masks","Started","Finished")
+private val statusList: List<String> = listOf("Not stated Yet","Started","No Masks","Finished")
 
 fun getStatus(statusCode: Int) : String{
     if((statusCode)>= statusList.size){

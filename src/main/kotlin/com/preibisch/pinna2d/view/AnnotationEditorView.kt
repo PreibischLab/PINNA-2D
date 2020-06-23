@@ -5,13 +5,13 @@ import com.preibisch.pinna2d.controllers.AnnotationController
 import com.preibisch.pinna2d.controllers.ImageController
 import com.preibisch.pinna2d.model.AnnotationEntryModel
 import com.preibisch.pinna2d.tools.Imp
-import com.preibisch.pinna2d.util.CATEGORIES
-import com.preibisch.pinna2d.util.getColor
+import com.preibisch.pinna2d.util.*
 import javafx.scene.control.ToggleButton
 import javafx.scene.control.ToggleGroup
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import tornadofx.*
+import java.io.File
 
 class AnnotationEditorView : View("Annotations") {
 
@@ -79,11 +79,23 @@ class AnnotationEditorView : View("Annotations") {
                 }
 
             }
-            borderpane {  right = button("Export Statistics") {
+          button("Export Statistics") {
+              prefWidth = 220.0
                 setOnAction { controller.exportStatistics() }
-            } }
+            }
+            button("Save Instance Image") {
+                prefWidth = 220.0
+                setOnAction { save() }
+            }
+
 
         }
+    }
+
+    private fun save(){
+        val file = imageSaverBox(this.currentWindow)
+        if (file.toString() != null)
+            imageController.save(File(file.toString()))
     }
 
     private fun generateCategoriesButtons() {

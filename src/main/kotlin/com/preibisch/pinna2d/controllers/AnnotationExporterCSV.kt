@@ -6,7 +6,7 @@ import javafx.collections.ObservableList
 import java.io.File
 import java.io.FileWriter
 
-fun File.toAnnotationCSV(list: ObservableList<AnnotationEntryModel>) {
+fun File.toAnnotationCSV(list: ObservableList<AnnotationEntryModel>): Boolean {
     try {
         var fileWriter = FileWriter(this)
         val head = String.format("%s,%s,%s", AnnotationEntryModel::annotationId.name, AnnotationEntryModel::annotationVal.name, AnnotationEntryModel::spaceDims.name)
@@ -17,9 +17,12 @@ fun File.toAnnotationCSV(list: ObservableList<AnnotationEntryModel>) {
         }
         fileWriter.flush()
         fileWriter.close()
+        return true
     } catch (e: Exception) {
         Log.error("Error writing file !")
         Log.error(e.toString())
+        return false
     }
+
 
 }
