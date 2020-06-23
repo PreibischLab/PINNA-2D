@@ -1,9 +1,7 @@
 package com.preibisch.pinna2d.controllers
 
-import com.preibisch.pinna2d.model.AnnotationEntryTbl
-import com.preibisch.pinna2d.model.ImageEntry
-import com.preibisch.pinna2d.model.ImageEntryModel
-import com.preibisch.pinna2d.model.ImageEntryTbl
+import com.preibisch.pinna2d.model.*
+import com.preibisch.pinna2d.tools.Log
 import com.preibisch.pinna2d.util.assembleInputWithMasks
 import com.preibisch.pinna2d.util.execute
 import com.preibisch.pinna2d.util.getFiles
@@ -12,6 +10,7 @@ import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.update
 import tornadofx.*
 import java.io.File
@@ -34,12 +33,23 @@ class FilesAnalyzeManager : Controller() {
     }
 
     private fun newEntry(inputFiles: Array<File>, maskFiles: Array<File>) {
-        val assembledData: Map<File, List<File>> = assembleInputWithMasks(inputFiles, maskFiles)
-
-        assembledData.forEach { (t, u) ->
-            val bestMask = getMaxCells(u)
-            add(LocalDate.now(), t.name, bestMask.name, u.size, getNbCells(bestMask), 0, 0)
+        val listOfItems: List<ImageEntryModel> = execute {
+            ImageEntryTbl.selectAll().map {
+                ImageEntryModel().apply {
+                    item = it.toImageEntry()
+                }
+            }
         }
+        val assembledData: Map<File, List<File>> = assembleInputWithMasks(inputFiles, maskFiles)
+        files.addAll(listOfItems)
+        assembledData.forEach { (t, u) ->
+            if (!checkExist(t.name, listOfItems)) {
+                val bestMask = getMaxCells(u)
+                add(LocalDate.now(), t.name, bestMask.name, u.size, getNbCells(bestMask), 0, 0)
+            }
+        }
+
+
     }
 
     fun add(newEntryDate: LocalDate, newImageName: String, newMaskFile: String, newNbMasks: Int, newNbCells: Int, newNbClassifiedCells: Int, newStatus: Int): ImageEntry {
@@ -86,6 +96,16 @@ class FilesAnalyzeManager : Controller() {
             }
         }
         return f
+    }
+
+    private fun checkExist(img: String, all: List<ImageEntryModel>): Boolean {
+        for (item in all) {
+            if (item.fileName.value == img) {
+                Log.info("Image $img exist in database")
+                return true
+            }
+        }
+        return false;
     }
 
     private fun getNbCells(maskFile: File): Int {

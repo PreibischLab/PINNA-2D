@@ -12,4 +12,5 @@ val CATEGORIES = listOf(0, 1, 2, 3)
 
 val INPUT_FOLDER = "/Users/Marwan/Desktop/Irimia Project/Data/raw_Tiff"
 val MASKS_FOLDER = "/Users/Marwan/Desktop/Irimia Project/Data/Mask/masks"
-val PROJECT_FOLDER = "/Users/Marwan/Desktop/Irimia Project/"
+var PROJECT_FOLDER = "/Users/Marwan/Desktop/Irimia Project/"
+var CURRENT_IMAGE = ""

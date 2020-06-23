@@ -18,7 +18,7 @@ class ImageAnnotationView : View("Image View") {
     override val root = borderpane {
         EventControllers().addEventsListners(imageController.imageView)
 
-        scrollPane.setPrefSize(300.0, 250.0)
+        scrollPane.setPrefSize(500.0, 400.0)
         scrollPane.vbarPolicy = ScrollBarPolicy.AS_NEEDED
         scrollPane.hbarPolicy = ScrollBarPolicy.AS_NEEDED
         scrollPane.content =  imageController.imageView

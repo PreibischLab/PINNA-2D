@@ -22,18 +22,12 @@ class AnnotationController : Controller() {
     private var folder = ""
     private var currentImage = ""
     private val imageController: ImageController by inject()
-//    var annotationsModel = AnnotationEntryModel()
+
+    //    var annotationsModel = AnnotationEntryModel()
     var tableview: TableView<AnnotationEntryModel> by singleAssign()
 
     //    get All Items
-    private val listOfItems: ObservableList<AnnotationEntryModel> = execute {
-//        .orderBy(AnnotationEntryTbl.annotationVal)
-        AnnotationEntryTbl.selectAll().map {
-            AnnotationEntryModel().apply {
-                item = it.toAnnotationEntry()
-            }
-        }.observable()
-    }
+
 
     var items: ObservableList<AnnotationEntryModel> by singleAssign()
 //    var pieItemsData = FXCollections.observableArrayList<PieChart.Data>()
@@ -53,10 +47,10 @@ class AnnotationController : Controller() {
             }
         }
         items.add(AnnotationEntryModel().apply {
-            item = AnnotationEntry(newEntry[AnnotationEntryTbl.id], newEntryDate, newImageName, newAnnotationId, newAnnotationVal,spaceVal)
+            item = AnnotationEntry(newEntry[AnnotationEntryTbl.id], newEntryDate, newImageName, newAnnotationId, newAnnotationVal, spaceVal)
         })
 //        pieItemsData.add(PieChart.Data(newItem,newPrice))
-        return AnnotationEntry(newEntry[AnnotationEntryTbl.id], newEntryDate, newImageName, newAnnotationId, newAnnotationVal,spaceVal)
+        return AnnotationEntry(newEntry[AnnotationEntryTbl.id], newEntryDate, newImageName, newAnnotationId, newAnnotationVal, spaceVal)
     }
 
     fun update(updatedItem: AnnotationEntryModel): Int {
@@ -85,7 +79,7 @@ class AnnotationController : Controller() {
 
     private fun newEntry(img: String, min: Int, max: Int) {
         for (i in min..max) {
-            add(LocalDate.now(), img, i.toFloat(), -1,0)
+            add(LocalDate.now(), img, i.toFloat(), -1, 0)
 
         }
     }
@@ -93,23 +87,18 @@ class AnnotationController : Controller() {
     fun start(projectFolder: String, imageName: String, min: Float, max: Float) {
         folder = projectFolder
         currentImage = imageName
-//        items.removeAll()
         items.clear()
-//        items = FXCollections.observableArrayList();
         val exists = checkExist(imageName)
         if (!exists)
             newEntry(imageName, min.toInt(), max.toInt())
         else {
-
             val newItems = execute {
-//        .orderBy(AnnotationEntryTbl.annotationVal)
                 AnnotationEntryTbl.select { AnnotationEntryTbl.imageName eq imageName }.map {
                     AnnotationEntryModel().apply {
                         item = it.toAnnotationEntry()
                     }
                 }
             }
-
             items.addAll(newItems.observable())
             addAll(newItems)
         }
@@ -125,9 +114,16 @@ class AnnotationController : Controller() {
 
 
     private fun checkExist(img: String): Boolean {
+        val listOfItems: List<AnnotationEntryModel> = execute {
+            AnnotationEntryTbl.selectAll().map {
+                AnnotationEntryModel().apply {
+                    item = it.toAnnotationEntry()
+                }
+            }
+        }
         for (item in listOfItems) {
             if (item.imageName.value == img) {
-                Log.info("Image exist in database")
+                Log.info("Image $img in Annotation database ")
                 return true
             }
         }
@@ -150,8 +146,8 @@ class AnnotationController : Controller() {
     }
 
     fun exportStatistics() {
-       val basename = currentImage.split(".")[0]
-        val f = File(folder,String.format("%s.csv",basename))
+        val basename = currentImage.split(".")[0]
+        val f = File(folder, String.format("%s.csv", basename))
         f.toAnnotationCSV(items)
     }
 

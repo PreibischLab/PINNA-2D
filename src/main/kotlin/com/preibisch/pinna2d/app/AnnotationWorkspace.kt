@@ -35,12 +35,9 @@ class AnnotationWorkspace : Workspace("PINNA-2D", NavigationMode.Tabs) {
         // doc our views
         val select = dock<FileSelectionView>()
 
-//        dock<MainAnnotationView>()
         tabContainer.tabClosingPolicy = TabPane.TabClosingPolicy.UNAVAILABLE
     }
 
-    fun startAnnotation() {
-        Log.info("Start Annotation")
-    }
+
 
 }

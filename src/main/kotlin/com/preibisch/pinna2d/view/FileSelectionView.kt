@@ -1,28 +1,22 @@
 package com.preibisch.pinna2d.view
 
-import com.preibisch.pinna2d.app.AnnotationWorkspace
 import com.preibisch.pinna2d.app.Styles
 import com.preibisch.pinna2d.controllers.FilesAnalyzeManager
 import com.preibisch.pinna2d.controllers.InstanceController
 import com.preibisch.pinna2d.model.ImageEntryModel
-import com.preibisch.pinna2d.tools.Log
 import com.preibisch.pinna2d.util.*
 import javafx.beans.property.SimpleStringProperty
-import javafx.geometry.Insets
-import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.control.Alert
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
-import javafx.stage.FileChooser
 import tornadofx.*
 import java.io.File
 
 class FileSelectionView : View("Select Inputs") {
 
     private val instanceController: InstanceController by inject()
-
     private val controller: FilesAnalyzeManager by inject()
     var projectFolder = SimpleStringProperty(PROJECT_FOLDER)
     var input = SimpleStringProperty(INPUT_FOLDER)
@@ -65,6 +59,8 @@ class FileSelectionView : View("Select Inputs") {
                 prefWidth = 600.0
                 alignment = Pos.CENTER
                 action {
+                    initDB(projectFolder.value)
+                    PROJECT_FOLDER = projectFolder.value
                     controller.start(input.value,mask.value)
                 }
                 enableWhen{  input.isNotEmpty.and(mask.isNotEmpty)        }
@@ -84,7 +80,6 @@ class FileSelectionView : View("Select Inputs") {
                 text = getStatus(it.toInt())
             }
             column("File Name",ImageEntryModel::fileName)
-//            column("Masks Found",FileAnalyzeData::nbMasks)
             column("Cells",ImageEntryModel::nbCells)
             column("Classified",ImageEntryModel::nbClassifiedCells)
         }
@@ -99,7 +94,6 @@ class FileSelectionView : View("Select Inputs") {
             }
         }
     }
-
 
     private fun next() {
         when {

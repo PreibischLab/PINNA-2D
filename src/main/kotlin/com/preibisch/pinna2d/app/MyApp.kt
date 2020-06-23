@@ -4,8 +4,6 @@ import com.preibisch.pinna2d.controllers.AnnotationController
 import com.preibisch.pinna2d.controllers.EventControllers
 import com.preibisch.pinna2d.util.createTables
 import com.preibisch.pinna2d.util.enableConsoleLogger
-import com.preibisch.pinna2d.view.InputView
-import com.preibisch.pinna2d.view.MainAnnotationView
 import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
 import org.jetbrains.exposed.sql.Database
@@ -38,11 +36,6 @@ class MyApp: App(AnnotationWorkspace::class, Styles::class){
 
         // Initialize DB
         enableConsoleLogger()
-        Database.connect("jdbc:sqlite:./pinny-annotations.db", "org.sqlite.JDBC")
-        createTables()
-
-        // controller(es)
-        AnnotationController()
     }
 
 

@@ -22,6 +22,7 @@ class AnnotationEditorView : View("Annotations") {
     var categoriesButtons = ArrayList<ToggleButton>()
 
     override val root = vbox {
+        prefWidth = 200.0
         form {
             fieldset {
                 field("image:") {
