@@ -14,7 +14,7 @@ or
 
 Download the JAR download [PINNA-2D-0.1-jar-with-dependencies.jar](https://github.com/PreibischLab/PINNA-2D/releases/download/0.1/PINNA-2D-0.1.jar)  and run 
 ```bash
-java - jar PINNA-2D-0.1-jar-with-dependencies.jar
+java - jar PINNA-2D-0.1.jar
 ```
 
 if you get javafx not found related bug
