@@ -12,7 +12,7 @@ Mac: download [Pinna_macos_0_1.dmg](https://github.com/PreibischLab/PINNA-2D/rel
 
 or
 
-Download the JAR download [PINNA-2D-0.1-jar-with-dependencies.jar](https://github.com/PreibischLab/PINNA-2D/releases/download/0.1/PINNA-2D-0.1.jar)  and run 
+Download the JAR download [PINNA-2D-0.1-jar.jar](https://github.com/PreibischLab/PINNA-2D/releases/download/0.1/PINNA-2D-0.1.jar)  and run 
 ```bash
 java - jar PINNA-2D-0.1.jar
 ```
