@@ -1,7 +1,6 @@
 package com.preibisch.pinna2d.util
 
 import com.preibisch.pinna2d.tools.Log
-import tornadofx.*
 
 val CATEGORIES = listOf(0, 1, 2, 3,4)
 val CATEGORIES_STRINGS = listOf("b","1","2","3","e")

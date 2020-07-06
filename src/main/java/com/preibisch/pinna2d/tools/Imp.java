@@ -1,6 +1,5 @@
 package com.preibisch.pinna2d.tools;
 
-import com.preibisch.pinna2d.util.DEFAULTKt;
 import com.preibisch.pinna2d.utils.ImpHelpers;
 import ij.CompositeImage;
 import ij.ImagePlus;
@@ -40,12 +39,12 @@ public class Imp extends ImpHelpers {
         return instance;
     }
 
-    public static Imp init(String imagePath, String maskPath) throws IOException {
-        return init(imagePath, maskPath, WITH_CLICK);
+    public static Imp init(String imagePath, String maskPath,String lutPath) throws IOException {
+        return init(imagePath, maskPath, lutPath, WITH_CLICK);
     }
 
-    public static Imp init(String imagePath, String maskPath, int mode) throws IOException {
-        instance = new Imp(imagePath, maskPath, mode);
+    public static Imp init(String imagePath, String maskPath, String lutPath, int mode) throws IOException {
+        instance = new Imp(imagePath, maskPath,lutPath, mode);
         return instance;
     }
 
@@ -57,9 +56,9 @@ public class Imp extends ImpHelpers {
         return ImpHelpers.toImage(gui_image);
     }
 
-    private Imp(String imagePath, String maskPath, int mode) throws IOException {
+    private Imp(String imagePath, String maskPath,String lutPath, int mode) throws IOException {
 //        String p = Imp.class.getClassLoader().getResource("glasbey_inverted.lut").getPath();
-        File LUT_PATH = new File(DEFAULTKt.getLut_path());
+        File LUT_PATH = new File(lutPath);
         Log.info("Lut path: "+LUT_PATH.getAbsolutePath());
         if (LUT_PATH.exists())
         lut = LutLoader.openLut(LUT_PATH.getAbsolutePath());

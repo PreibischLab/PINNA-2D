@@ -4,7 +4,7 @@ import com.google.common.io.Resources
 import com.preibisch.pinna2d.view.MainAnnotationView
 
 //val LUT_PATH = MainAnnotationView::class.java.getResource("/glasbey_inverted.lut").path
-var lut_path = ""
+var LUT_PATH = ""
 
 //val INPUT_FOLDER = ""
 //val MASKS_FOLDER = ""

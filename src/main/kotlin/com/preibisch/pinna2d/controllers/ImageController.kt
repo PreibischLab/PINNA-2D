@@ -30,8 +30,8 @@ class ImageController : Controller() {
 
     }
 
-    fun start(input: String, mask: String, imageName: String) {
-        imageView.image = Imp.init(input, mask).toImage()
+    fun start(input: String, mask: String, imageName: String,lut:String) {
+        imageView.image = Imp.init(input, mask,lut).toImage()
     }
 
     fun addCircle(it: MouseEvent, root: Node) {

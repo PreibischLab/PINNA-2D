@@ -19,3 +19,5 @@ fun <T> randomValue(list: List<T>): T{
 }
 
 fun Double.format(digits: Int) = "%.${digits}f".format(this)
+
+val Int.plural : String get() = if(this ==1) "" else "s"

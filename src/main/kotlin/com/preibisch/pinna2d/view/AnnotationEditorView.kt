@@ -31,16 +31,8 @@ class AnnotationEditorView : View("Annotations") {
                     label(model.imageName)
                 }
             }
-            fieldset {
-                field("ID: ") {
-                    label(model.annotationId)
-                }
-            }
-            fieldset {
-                label("Category:") {
-                    addClass(Styles.biglabel)
-                }
-            }
+            fieldset { field("ID: ") { label(model.annotationId) } }
+            fieldset { label("Category:") {  addClass(Styles.biglabel) } }
             fieldset {
                 hbox(spacing = 10.0) {
                     categoriesButtons = generateCategoriesButtons()
@@ -50,9 +42,7 @@ class AnnotationEditorView : View("Annotations") {
             }
 
             fieldset {
-
                 controller.tableview = tableview<AnnotationEntryModel> {
-
                     items = controller.items
                     column("ID", AnnotationEntryModel::annotationId)
                     column("Category", AnnotationEntryModel::annotationVal).cellFormat {
@@ -140,7 +130,6 @@ class AnnotationEditorView : View("Annotations") {
     }
 
     private fun changeCategory(category: Int) {
-
         val size = Imp.get().add(model.annotationId.value.toFloat(), category)
         println("change category $category")
         model.annotationVal.value = category

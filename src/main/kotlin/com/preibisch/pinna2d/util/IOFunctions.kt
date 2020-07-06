@@ -49,13 +49,12 @@ fun openFolderChooser(): String {
     return file?.toString() ?: ""
 }
 
-fun openLutFileChooser(currentWindow: Window?): File? {
-    Log.info("save")
+fun openLutFileChooser(): String {
     var chooser = FileChooser()
     chooser.extensionFilters.add(FileChooser.ExtensionFilter("LUT file ", "*.lut"))
-    val file = chooser.showOpenDialog(currentWindow)
+    val file = chooser.showOpenDialog(null)
     Log.info(file.toString())
-    return file
+    return file?.toString() ?: ""
 }
 
 fun imageSaverBox(currentWindow: Window?): File? {

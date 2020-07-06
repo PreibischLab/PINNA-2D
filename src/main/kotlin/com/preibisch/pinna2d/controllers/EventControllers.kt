@@ -63,7 +63,10 @@ class EventControllers : Controller() {
     }
 
     fun keyReleased(key: KeyCode) {
+//        if (key.isDigitKey)
+//            imageController.keyClick
         println("removed ${key.toString()}")
+//        imageController.select(it.annotationId.value.toFloat())
         pressedKeys.remove(key)
     }
 }
