@@ -6,6 +6,8 @@ import com.preibisch.pinna2d.controllers.ImageController
 import com.preibisch.pinna2d.model.AnnotationEntryModel
 import com.preibisch.pinna2d.tools.Imp
 import com.preibisch.pinna2d.util.*
+import javafx.scene.control.Labeled
+import javafx.scene.control.TableCell
 import javafx.scene.control.ToggleButton
 import javafx.scene.control.ToggleGroup
 import javafx.scene.paint.Color
@@ -41,7 +43,7 @@ class AnnotationEditorView : View("Annotations") {
             }
             fieldset {
                 hbox(spacing = 10.0) {
-                    generateCategoriesButtons()
+                    categoriesButtons = generateCategoriesButtons()
                     for (button in categoriesButtons)
                         add(button)
                 }
@@ -54,12 +56,7 @@ class AnnotationEditorView : View("Annotations") {
                     items = controller.items
                     column("ID", AnnotationEntryModel::annotationId)
                     column("Category", AnnotationEntryModel::annotationVal).cellFormat {
-                        val circle = Circle(10.0)
-                        circle.stroke = Color.BLACK
-                        circle.strokeWidth = 1.0
-                        circle.fill = c(getColor(item.toInt()))
-                        graphic = circle
-                        text = if (item.toInt() < 0) "" else it.toString()
+                        initGraphic(this, Category(item.toInt()))
                     }
                     column("Size", AnnotationEntryModel::spaceDims)
 
@@ -98,29 +95,36 @@ class AnnotationEditorView : View("Annotations") {
             imageController.save(File(file.toString()))
     }
 
-    private fun generateCategoriesButtons() {
+    private fun generateCategoriesButtons(): ArrayList<ToggleButton> {
+        var butts = ArrayList<ToggleButton>()
         val group = ToggleGroup()
         for (cat in CATEGORIES)
-            categoriesButtons.add(getButton(cat, group))
+            butts.add(getButton(cat, group))
+        return butts
     }
 
-    private fun getButton(category: Int, group: ToggleGroup): ToggleButton {
+    private fun getButton(cat: Int, group: ToggleGroup): ToggleButton {
 
         return togglebutton(group = group) {
-            userData = category
+            userData = cat
             toggleGroupProperty().set(group)
-            val circle = Circle(10.0)
-            circle.stroke = Color.BLACK
-            circle.strokeWidth = 1.0
-            circle.fill = c(getColor(category))
-            graphic = circle
+            initGraphic(this, Category(cat))
             isDisable = true
-            text = if (category < 0) "" else category.toString()
             setOnAction {
-                changeCategory(category)
+                changeCategory(cat)
             }
 
         }
+    }
+
+    private fun initGraphic(graph: Labeled , category: Category) {
+        val circle = Circle(10.0)
+        circle.stroke = Color.BLACK
+        circle.strokeWidth = 1.0
+        circle.fill = c(category.getColor())
+        graph.text = category.getString()
+        graph.graphic = circle
+
     }
 
     fun setSelectedCategory(category: Int) {
