@@ -14,8 +14,9 @@ class MyApp: App(AnnotationWorkspace::class, Styles::class){
             height = 800.0
             addEventFilter(KeyEvent.ANY) {
                when(it.eventType){
-                   KeyEvent.KEY_PRESSED -> eventControllers.keyPressed(it.code)
-                   KeyEvent.KEY_RELEASED -> eventControllers.keyReleased(it.code)
+
+//                   KeyEvent.KEY_PRESSED -> eventControllers.keyPressed(it.code)
+                   KeyEvent.KEY_RELEASED -> eventControllers.keyReleased( it.text)
                }
             }
             super.start(stage)

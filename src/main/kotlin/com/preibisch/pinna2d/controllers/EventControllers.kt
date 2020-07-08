@@ -1,5 +1,6 @@
 package com.preibisch.pinna2d.controllers
 
+import com.preibisch.pinna2d.tools.Log
 import javafx.scene.Node
 import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
@@ -12,9 +13,9 @@ class EventControllers : Controller() {
     public val ANNOTATION_MODE = 0
     public val SEGMENTATION_MODE = 1
     var mode = ANNOTATION_MODE
-    var pressedKeys: ArrayList<KeyCode> = arrayListOf()
+//    var pressedKeys: ArrayList<KeyCode> = arrayListOf()
 
-    private val imageController: ImageController by inject()
+    private val controller: InstanceController by inject()
 
     public fun addEventsListners(node: ImageView) {
         with(node) {
@@ -33,17 +34,18 @@ class EventControllers : Controller() {
     }
 
     private fun segmentationEvent(it: MouseEvent, node: Node) {
-        when (it.eventType) {
-            MouseDragEvent.MOUSE_CLICKED -> imageController.addCircle(it, node)
-            MouseDragEvent.MOUSE_DRAGGED -> imageController.addCircle(it, node)
-//                    else -> imageController.positionCicle(it, this)
-//                MouseEvent.MOUSE_MOVED
-        }
+        Log.error("Segmentation not implimented yet")
+//        when (it.eventType) {
+//            MouseDragEvent.MOUSE_CLICKED -> imageController.addCircle(it, node)
+//            MouseDragEvent.MOUSE_DRAGGED -> imageController.addCircle(it, node)
+////                    else -> imageController.positionCicle(it, this)
+////                MouseEvent.MOUSE_MOVED
+//        }
     }
 
     private fun annotationEvent(it: MouseEvent, node: Node) {
         when (it.eventType) {
-            MouseDragEvent.MOUSE_CLICKED -> {imageController.clickOnImage(it.x, it.y)
+            MouseDragEvent.MOUSE_CLICKED -> {controller.clickOnImage(it.x, it.y)
 
                 println("X: ${it.x} - Y: ${it.y} - sceneX: ${it.sceneX} - sceneY: ${it.sceneY} - screenX: ${it.screenX} - screenY: ${it.screenY}")
 
@@ -52,21 +54,21 @@ class EventControllers : Controller() {
 
     }
 
-    fun mouseScroll(deltaY: Double) {
-        imageController.circleRadius += (imageController.scrollFactor * deltaY)
-        if (imageController.circleRadius < 1) imageController.circleRadius = 1.0
-    }
+//    fun mouseScroll(deltaY: Double) {
+//        imageController.circleRadius += (imageController.scrollFactor * deltaY)
+//        if (imageController.circleRadius < 1) imageController.circleRadius = 1.0
+//    }
 
-    fun keyPressed(key: KeyCode) {
-        println(key.toString())
-        pressedKeys.add(key)
-    }
+//    fun keyPressed(key: KeyCode) {
+//        println(key.toString())
+//        pressedKeys.add(key)
+//    }
 
-    fun keyReleased(key: KeyCode) {
-//        if (key.isDigitKey)
-//            imageController.keyClick
-        println("removed ${key.toString()}")
+    fun keyReleased(key: String) {
+        if (key.isInt())
+            controller.numberClicked(key.toInt())
+
 //        imageController.select(it.annotationId.value.toFloat())
-        pressedKeys.remove(key)
+//        pressedKeys.remove(key)
     }
 }

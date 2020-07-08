@@ -13,7 +13,7 @@ class MainAnnotationView : View("Annotation") {
     private val imageView: ImageAnnotationView by inject()
     private val annotationEditorView: AnnotationEditorView by inject()
     override val root = borderpane() {
-        setPrefSize(1000.0, 800.0)
+//        setPrefSize(1000.0, 800.0)
 
         center = imageView.root
         left = annotationEditorView.root

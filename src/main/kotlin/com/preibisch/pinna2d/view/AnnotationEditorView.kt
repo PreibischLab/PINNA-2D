@@ -1,13 +1,12 @@
 package com.preibisch.pinna2d.view
 
 import com.preibisch.pinna2d.app.Styles
-import com.preibisch.pinna2d.controllers.AnnotationController
-import com.preibisch.pinna2d.controllers.ImageController
+import com.preibisch.pinna2d.controllers.InstanceController
 import com.preibisch.pinna2d.model.AnnotationEntryModel
-import com.preibisch.pinna2d.tools.Imp
-import com.preibisch.pinna2d.util.*
+import com.preibisch.pinna2d.util.CATEGORIES
+import com.preibisch.pinna2d.util.Category
+import com.preibisch.pinna2d.util.imageSaverBox
 import javafx.scene.control.Labeled
-import javafx.scene.control.TableCell
 import javafx.scene.control.ToggleButton
 import javafx.scene.control.ToggleGroup
 import javafx.scene.paint.Color
@@ -17,22 +16,22 @@ import java.io.File
 
 class AnnotationEditorView : View("Annotations") {
 
-    var model = AnnotationEntryModel()
-    val controller: AnnotationController by inject()
-    private val imageController: ImageController by inject()
+    val instanceController: InstanceController by inject()
+
+    //    private val imageController: ImageController by inject()
     var mTableView: TableViewEditModel<AnnotationEntryModel> by singleAssign()
     var categoriesButtons = ArrayList<ToggleButton>()
 
     override val root = vbox {
-        prefWidth = 200.0
+//        prefWidth = 200.0
         form {
             fieldset {
                 field("image:") {
-                    label(model.imageName)
+                    label(instanceController.model.imageName)
                 }
             }
-            fieldset { field("ID: ") { label(model.annotationId) } }
-            fieldset { label("Category:") {  addClass(Styles.biglabel) } }
+            fieldset { field("ID: ") { label(instanceController.model.annotationId) } }
+            fieldset { label("Category:") { addClass(Styles.biglabel) } }
             fieldset {
                 hbox(spacing = 10.0) {
                     categoriesButtons = generateCategoriesButtons()
@@ -42,8 +41,8 @@ class AnnotationEditorView : View("Annotations") {
             }
 
             fieldset {
-                controller.tableview = tableview<AnnotationEntryModel> {
-                    items = controller.items
+                instanceController.annotationController.tableview = tableview<AnnotationEntryModel> {
+                    items = instanceController.annotationController.items
                     column("ID", AnnotationEntryModel::annotationId)
                     column("Category", AnnotationEntryModel::annotationVal).cellFormat {
                         initGraphic(this, Category(item.toInt()))
@@ -52,37 +51,41 @@ class AnnotationEditorView : View("Annotations") {
 
                     onSelectionChange {
                         if (it != null) {
-                            model.id.value = it.id.value
-                            model.entryDate.value = it.entryDate.value
-                            model.imageName.value = it.imageName.value
-                            model.annotationId.value = it.annotationId.value
+                            with(instanceController) {
+                                model.id.value = it.id.value
+                                model.entryDate.value = it.entryDate.value
+                                model.imageName.value = it.imageName.value
+                                model.annotationId.value = it.annotationId.value
+                            }
+
                             setSelectedCategory(it.annotationVal.value.toInt())
                             enableCategoryButtons()
-                            if (it.annotationId.value != null) {
-                                imageController.select(it.annotationId.value.toFloat())
+                                instanceController.selectAreaInImage(it)
                             }
                         }
                     }
                 }
 
+            fieldset {
+                button("Export Statistics") {
+                    prefWidth = 220.0
+                    setOnAction { instanceController.exportStatistics() }
+                }
             }
-          button("Export Statistics") {
-              prefWidth = 220.0
-                setOnAction { controller.exportStatistics() }
-            }
-            button("Save Instance Image") {
-                prefWidth = 220.0
-                setOnAction { save() }
+            fieldset {
+                button("Save Instance Image") {
+                    prefWidth = 220.0
+                    setOnAction { save() }
+                }
             }
 
 
         }
     }
 
-    private fun save(){
+    private fun save() {
         val file = imageSaverBox(this.currentWindow)
-        if (file.toString() != null)
-            imageController.save(File(file.toString()))
+        instanceController.saveImage(file)
     }
 
     private fun generateCategoriesButtons(): ArrayList<ToggleButton> {
@@ -101,13 +104,17 @@ class AnnotationEditorView : View("Annotations") {
             initGraphic(this, Category(cat))
             isDisable = true
             setOnAction {
-                changeCategory(cat)
+                changeCategoryAction(cat)
             }
 
         }
     }
 
-    private fun initGraphic(graph: Labeled , category: Category) {
+    private fun changeCategoryAction(cat: Int) {
+        instanceController.setCategory(cat)
+    }
+
+    private fun initGraphic(graph: Labeled, category: Category) {
         val circle = Circle(10.0)
         circle.stroke = Color.BLACK
         circle.strokeWidth = 1.0
@@ -125,22 +132,9 @@ class AnnotationEditorView : View("Annotations") {
     }
 
     fun enableCategoryButtons() {
+        instanceController.setStart()
         for (b in categoriesButtons)
             b.isDisable = false
     }
 
-    private fun changeCategory(category: Int) {
-        val size = Imp.get().add(model.annotationId.value.toFloat(), category)
-        println("change category $category")
-        model.annotationVal.value = category
-        model.spaceDims.value = size
-        for (it in controller.items) {
-            if (it.id.value == model.id.value) {
-                it.annotationVal.value = category
-                it.spaceDims.value = size
-            }
-        }
-        controller.update(model)
-        controller.tableview.selectionModel.selectNext()
-    }
 }
