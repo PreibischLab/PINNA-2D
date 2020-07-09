@@ -144,8 +144,10 @@ class AnnotationController : Controller() {
         }
         if (position >= tableview.items.size)
             Log.error("Not found $v")
-        else
+        else {
             tableview.selectionModel.select(position)
+            tableview.scrollTo(position)
+        }
     }
 
     fun exportStatistics() {

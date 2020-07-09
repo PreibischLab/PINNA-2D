@@ -19,7 +19,7 @@ class AnnotationEditorView : View("Annotations") {
     val instanceController: InstanceController by inject()
 
     //    private val imageController: ImageController by inject()
-    var mTableView: TableViewEditModel<AnnotationEntryModel> by singleAssign()
+//    var mTableView: TableViewEditModel<AnnotationEntryModel> by singleAssign()
     var categoriesButtons = ArrayList<ToggleButton>()
 
     override val root = vbox {

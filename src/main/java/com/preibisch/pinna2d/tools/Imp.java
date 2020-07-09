@@ -146,7 +146,7 @@ public class Imp extends ImpHelpers {
         int dims = img.numDimensions() - 1;
         IntervalView<FloatType> results = Views.hyperSlice(img, dims, categoryChannel);
         Log.info(String.format("Set category %d to instance %.2f",category,value));
-        return add(mask, results, value, category+2);
+        return add(mask, results, value, category+4);
     }
 
     public float getMin() {
