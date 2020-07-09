@@ -12,6 +12,7 @@ class MyApp: App(AnnotationWorkspace::class, Styles::class){
         with(stage){
             width = 1000.0
             height = 800.0
+            isMaximized= true
             addEventFilter(KeyEvent.ANY) {
                when(it.eventType){
 
