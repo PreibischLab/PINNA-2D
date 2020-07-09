@@ -111,7 +111,8 @@ class AnnotationController : Controller() {
             if (it.annotationVal.value.toInt() > 0)
                 Imp.get().add(it.annotationId.value.toFloat(), it.annotationVal.value.toInt())
         }
-        imageController.updateImage()
+        imageController.imageView.image = Imp.get().toImage()
+//        imageController.updateImage()
     }
 
 

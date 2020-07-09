@@ -13,6 +13,8 @@ import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -48,12 +50,44 @@ public class Imp extends ImpHelpers {
         return instance;
     }
 
+    public Image toImage(Point point) {
+        gui_image.updateImage();
+        int position = categoryChannel+1;
+        if(lut!=null)
+            gui_image.setChannelLut(lut, position);
+        BufferedImage buff = gui_image.getBufferedImage();
+        Rectangle rect = getRectangle(point,30,new Point(buff.getWidth(),buff.getHeight()));
+        Log.info("rectangle: " +rect.toString());
+        addRectangle(buff,rect);
+        Image fxImage = ImpHelpers.toImage(buff);
+        return fxImage;
+    }
+
     public Image toImage() {
         gui_image.updateImage();
         int position = categoryChannel+1;
         if(lut!=null)
             gui_image.setChannelLut(lut, position);
-        return ImpHelpers.toImage(gui_image);
+        BufferedImage buff = gui_image.getBufferedImage();
+        Image fxImage = ImpHelpers.toImage(buff);
+        return fxImage;
+    }
+
+    private void addRectangle(BufferedImage buff, Rectangle rectangle) {
+        Graphics2D graph = buff.createGraphics();
+        graph.setColor(Color.RED);
+        graph.draw(rectangle);
+//        graph.fill(rectangle);
+        graph.dispose();
+    }
+
+    private Rectangle getRectangle(Point point, int dim, Point maxPoint) {
+        int x1 = Math.max(point.x-dim,0);
+        int y1 = Math.max(point.y-dim,0);
+
+        int x2 = Math.min(point.x+dim,maxPoint.x-1);
+        int y2 = Math.min(point.y+dim,maxPoint.y-1);
+        return  new Rectangle(x1,y1,x2-x1,y2-y1);
     }
 
     private Imp(String imagePath, String maskPath,String lutPath, int mode) throws IOException {
@@ -102,10 +136,10 @@ public class Imp extends ImpHelpers {
         return getValue(mask, x, y);
     }
 
-    public void set(float value) {
+    public Point set(float value) {
         int dims = img.numDimensions() - 1;
         IntervalView<FloatType> results = Views.hyperSlice(img, dims, clickViewChannel);
-        setOnly(mask, results, value, CLICK_VALUE);
+        return setOnly(mask, results, value, CLICK_VALUE);
     }
 
     public long add(float value, int category) {

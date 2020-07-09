@@ -24,6 +24,8 @@ import net.imglib2.type.numeric.real.FloatType;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Iterator;
 
@@ -160,8 +162,8 @@ public class ImpHelpers {
     }
 
 
-    public static Image toImage(ImagePlus imp) {
-        Image fxImage = SwingFXUtils.toFXImage(imp.getBufferedImage(), null);
+    public static Image toImage(BufferedImage buff) {
+        Image fxImage = SwingFXUtils.toFXImage(buff, null);
         return fxImage;
     }
 
@@ -201,17 +203,24 @@ public class ImpHelpers {
     }
 
 
-    public static void setOnly(Img<FloatType> masks, IntervalView<FloatType> result, float value, int setValue) {
+    public static Point setOnly(Img<FloatType> masks, IntervalView<FloatType> result, float value, int setValue) {
+        int x = 0;
+        int y = 0;
         Cursor<FloatType> cursorInput = masks.cursor();
         RandomAccess<FloatType> randomAccess = result.randomAccess();
         while (cursorInput.hasNext()) {
             cursorInput.fwd();
             randomAccess.setPosition(cursorInput);
-            if (cursorInput.get().get() == value)
-                randomAccess.get().set(setValue);
+            if (cursorInput.get().get() == value){
+                x+=cursorInput.getIntPosition(0);
+                x/=2;
+                y+=cursorInput.getIntPosition(1);
+                y/=2;
+                randomAccess.get().set(setValue);}
             else
                 randomAccess.get().set(0);
         }
+        return new Point(x,y);
     }
 
     public static <T extends FloatType> void computeMinMax(

@@ -1,6 +1,5 @@
 package com.preibisch.pinna2d.controllers
 
-import com.preibisch.pinna2d.model.AnnotationEntryModel
 import com.preibisch.pinna2d.tools.Imp
 import com.preibisch.pinna2d.tools.Log
 import com.preibisch.pinna2d.util.showPopup
@@ -12,6 +11,7 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import tornadofx.*
+import java.awt.Point
 import java.io.File
 
 
@@ -26,9 +26,6 @@ class ImageController : Controller() {
     var imageView = ImageView()
     var currentCategory = 0;
 
-    init {
-
-    }
 
     fun start(input: String, mask: String, imageName: String,lut:String) {
         imageView.image = Imp.init(input, mask,lut).toImage()
@@ -54,13 +51,14 @@ class ImageController : Controller() {
         root.getChildList()!!.add(1, positionCircle)
     }
 
-    fun clickOnImage(x: Double, y: Double) {
-        val v = Imp.get().getValue(x.toInt(), y.toInt())
+    fun clickOnImage(point: Point) {
+        val v = Imp.get().getValue(point.x, point.y)
+
         if (v > 0) {
             annotationController.select(v)
-            select(v)
+            select(v,point)
         }
-        Log.info("x: $x y: $y - Val :$v")
+        Log.info("x: $point.x y: $point.y - Val :$v")
     }
 
     fun save(file: File) {
@@ -68,15 +66,22 @@ class ImageController : Controller() {
         showPopup(result,"Saving file!",file.path)
     }
 
-    fun select(v: Float) {
+    fun select(v: Float, point: Point) {
         if (v > 0) {
             Imp.get().set(v)
-            updateImage()
+            updateImage(point)
         }
     }
 
-    fun updateImage() {
-        imageView.image = Imp.get().toImage()
+    fun updateImage(point: Point) {
+        imageView.image = Imp.get().toImage(point)
+    }
+
+    fun select(v: Float) {
+        if (v > 0) {
+            val point = Imp.get().set(v)
+            updateImage(point)
+        }
     }
 
 }

@@ -25,11 +25,11 @@ class AnnotationEditorView : View("Annotations") {
     override val root = vbox {
 //        prefWidth = 200.0
         form {
-            fieldset {
-                field("image:") {
-                    label(instanceController.model.imageName)
-                }
-            }
+//            fieldset {
+//                field("image:") {
+//                    label(instanceController.model.imageName)
+//                }
+//            }
             fieldset { field("ID: ") { label(instanceController.model.annotationId) } }
             fieldset { label("Category:") { addClass(Styles.biglabel) } }
             fieldset {
