@@ -82,7 +82,6 @@ class AnnotationController : Controller() {
     private fun newEntry(imageId: Int, img: String, min: Int, max: Int) {
         for (i in min..max) {
             add(imageId,LocalDate.now(), img, i.toFloat(), -1, 0)
-
         }
     }
 

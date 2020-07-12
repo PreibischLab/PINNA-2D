@@ -16,6 +16,9 @@ import java.io.File
 
 
 class ImageController : Controller() {
+    private var point = Point(0, 0)
+
+    //    var channelsActivation: MutableMap<String, Boolean> = HashMap()
     val annotationController: AnnotationController by inject()
     val scrollFactor = 0.4
     private var circle = Circle()
@@ -24,11 +27,14 @@ class ImageController : Controller() {
     private var started = false
     var mText = SimpleStringProperty()
     var imageView = ImageView()
-    var currentCategory = 0;
+    var currentCategory = 0
 
 
-    fun start(input: String, mask: String, imageName: String,lut:String) {
-        imageView.image = Imp.init(input, mask,lut).toImage()
+    fun start(input: String, mask: String, imageName: String, lut: String) {
+        imageView.image = Imp.init(input, mask, lut).toImage()
+//        channelsActivation.clear()
+//        channelsActivation.putAll(Imp.get().channelsNames)
+//        Log.info("Channels: $channelsActivation")
     }
 
     fun addCircle(it: MouseEvent, root: Node) {
@@ -56,14 +62,14 @@ class ImageController : Controller() {
 
         if (v > 0) {
             annotationController.select(v)
-            select(v,point)
+            select(v, point)
         }
         Log.info("x: $point.x y: $point.y - Val :$v")
     }
 
     fun save(file: File) {
-        val result =  Imp.get().save(file)
-        showPopup(result,"Saving file!",file.path)
+        val result = Imp.get().save(file)
+        showPopup(result, "Saving file!", file.path)
     }
 
     fun select(v: Float, point: Point) {
@@ -73,7 +79,15 @@ class ImageController : Controller() {
         }
     }
 
+    fun updateImage() {
+        if (point.x > 0)
+            imageView.image = Imp.get().toImage(point)
+        else
+            imageView.image = Imp.get().toImage()
+    }
+
     fun updateImage(point: Point) {
+        this.point = point;
         imageView.image = Imp.get().toImage(point)
     }
 
@@ -82,6 +96,15 @@ class ImageController : Controller() {
             val point = Imp.get().set(v)
             updateImage(point)
         }
+    }
+
+    fun getActivationMap(): MutableMap<String, Boolean> {
+        return Imp.get().channelsNames
+    }
+
+    fun changeActivationValueFor(text: String, value: Boolean) {
+        Imp.get().changeActivationValueFor(text, value)
+        updateImage()
     }
 
 }

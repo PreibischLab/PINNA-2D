@@ -18,7 +18,6 @@ import java.time.LocalDate
 
 class FilesAnalyzeManager : Controller() {
     var model = InputConfiguration()
-
     var files: ObservableList<ImageEntryModel> by singleAssign()
     val selectedFile = SimpleObjectProperty<ImageEntryModel>()
 
@@ -27,6 +26,7 @@ class FilesAnalyzeManager : Controller() {
     }
 
     fun start(input: String, mask: String) {
+        files.clear()
         val inputFiles = getFiles(File(input), ".tif")
         val maskFiles = getFiles(File(mask), ".tif")
         newEntry(inputFiles, maskFiles)
